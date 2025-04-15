@@ -1,5 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('hudley', {
-  readDatalog: (datalogPath) => ipcRenderer.invoke('readDatalog', datalogPath)
-})
+  readDatalog: (datalogPath) => ipcRenderer.invoke('readDatalog', datalogPath),
+});

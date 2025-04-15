@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-import { readDatalog } from './dl-reader/dl-reader.js';
+import readDatalog from './dl-reader/dl-reader';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -33,7 +33,7 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  ipcMain.handle('readDatalog', (_, datalogPath) => readDatalog(datalogPath))
+  ipcMain.handle('readDatalog', (_, datalogPath) => readDatalog(datalogPath));
   createWindow();
 
   // On OS X it's common to re-create a window in the app when the

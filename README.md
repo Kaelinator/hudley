@@ -15,3 +15,15 @@ npm start
 ```
 npm test
 ```
+
+## How to lint
+
+```
+npm run lint
+```
+
+and to fix all auto-fixable linting issues
+
+```
+npm run lint -- --fix
+```

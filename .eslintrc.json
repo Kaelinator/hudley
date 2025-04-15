@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {"devDependencies": true}
+    ]
+  },
+  "globals": {
+    "MAIN_WINDOW_VITE_DEV_SERVER_URL": true,
+    "MAIN_WINDOW_VITE_NAME": true
+  }
+}
