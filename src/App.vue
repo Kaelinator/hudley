@@ -1,8 +1,17 @@
 <template>
-  <h1>💖 Hello World!</h1>
-  <p>Welcome to your Electron application :)</p>
+  <div>
+    <h1>Enter file path</h1>
+    <input v-model="datalogPath" placeholder="path/to/my/datalog.dl" @keyup.enter="readDatalog">
+    <button @click="readDatalog">Read</button>
+  </div>
 </template>
 
 <script setup>
-console.log('👋 This message is being logged by "App.vue", included via Vite');
+  import { ref } from 'vue'
+
+  const datalogPath = ref('')
+
+  const readDatalog = () => {
+    console.log(datalogPath.value)
+  }
 </script>
