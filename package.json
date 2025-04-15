@@ -6,13 +6,14 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
+    "test": "vitest",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
-  "author": "kael",
+  "author": "Kaelinator et al.",
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.8.0",
@@ -26,7 +27,8 @@
     "@electron/fuses": "^1.8.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "electron": "35.1.5",
-    "vite": "^5.4.18"
+    "vite": "^5.4.18",
+    "vitest": "^3.1.1"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",

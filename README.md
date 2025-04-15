@@ -9,3 +9,9 @@ Visualize your car's data and overlay it on your video
 npm i
 npm start
 ```
+
+## How to test
+
+```
+npm test
+```
