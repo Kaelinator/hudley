@@ -11,7 +11,9 @@
 
   const datalogPath = ref('')
 
-  const readDatalog = async () => {
-    console.log(await window.hudley.readDatalog(datalogPath.value));
+  const readDatalog = () => {
+    window.hudley.readDatalog(datalogPath.value)
+      .then(console.log)
+      .catch(console.log);
   }
 </script>
