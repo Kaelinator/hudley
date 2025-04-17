@@ -1,0 +1,2 @@
+test-data/medium-datalog-0.dl filter=lfs diff=lfs merge=lfs -text
+test-data/small-datalog-0.dl filter=lfs diff=lfs merge=lfs -text
