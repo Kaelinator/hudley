@@ -31,6 +31,7 @@ const getDataPoint = ({ bytesRead, buffer }) => {
   }
 
   return {
+    rtc: buffer.readInt32LE(0x8),
     rpm: buffer.readFloatLE(0x10),
     injPW: buffer.readFloatLE(0x18),
     dutyCycle: buffer.readFloatLE(0x20),
