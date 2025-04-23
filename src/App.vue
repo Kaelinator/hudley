@@ -31,6 +31,9 @@
       <button @click="viewPoints.splice(index, 1)">delete</button>
     </div>
     <button @click="viewPoints.push({ point: '', location: '', precision: 0 })">Add datapoint to view</button>
+    <br/>
+    <input v-model="renderPath" placeholder="path/to/output.webm" @keyup.enter="renderFile(renderPath)" />
+    <button @click="renderFile(renderPath)">Render</button>
     <div class="checkered">
       <canvas ref="renderer" :width="canvasWidth" :height="canvasHeight" />
     </div>
@@ -39,8 +42,10 @@
 
 <script setup>
   import { ref, reactive, watch, watchEffect, useTemplateRef } from 'vue';
+  import { renderFrame, render } from './webm-renderer/renderer';
 
   const datalogPath = ref('/home/kael/Code/hudley/test-data/small-datalog-0.dl');
+  const renderPath = ref('/home/kael/Code/hudley/test-data/out.webm');
   const datalog = ref(null);
   const availablePoints = ref([]);
   const canvasHeight = ref(1080);
@@ -59,7 +64,7 @@
         availablePoints.value = Object.keys(parsedDatalog.points[0]);
         watchEffect(() => {
           if (canvas.value) {
-            watch(viewPoints, render(datalog.value.points[0], canvas.value.getContext('2d')));
+            watch(viewPoints, renderFrame(datalog.value.points[0], canvas.value.getContext('2d')));
           } else {
             // not mounted yet, or the element was unmounted (e.g. by v-if)
           }
@@ -68,30 +73,8 @@
       .catch(console.log);
   };
 
-  const render = (pointValues, context) => (viewPoints) => {
-    const width = context.canvas.width;
-    const height = context.canvas.height;
-    console.log('rendering', viewPoints, width, height);
-    context.clearRect(0, 0, width, height);
-    context.font = 'bold 48px sans-serif';
-    viewPoints.forEach(({ point, location, precision }) => {
-      if (point === '' || location === '') {
-        return;
-      }
-      const [ x, y, textAlign, textBaseline ] = {
-        topLeft:      [ 0,         0,          'left',   'top'    ],
-        topMiddle:    [ width / 2, 0,          'center', 'top'    ],
-        topRight:     [ width,     0,          'right',  'top'    ],
-        middleLeft:   [ 0,         height / 2, 'left',   'middle' ],
-        middleMiddle: [ width / 2, height / 2, 'center', 'middle' ],
-        middleRight:  [ width,     height / 2, 'right',  'middle' ],
-        bottomLeft:   [ 0,         height,     'left',   'bottom' ],
-        bottomMiddle: [ width / 2, height,     'center', 'bottom' ],
-        bottomRight:  [ width,     height,     'right',  'bottom' ],
-      }[location];
-      context.textAlign = textAlign;
-      context.textBaseline = textBaseline;
-      context.fillText(pointValues[point].toFixed(precision), x, y);
-    });
+  const renderFile = (path) => {
+    render(path, datalog.value.points, canvas.value.getContext('2d'), viewPoints);
   }
+
 </script>
