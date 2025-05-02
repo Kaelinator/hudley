@@ -31,12 +31,23 @@ export const renderFrame = (pointValues, context) => (viewPoints) => {
 export const render = async (path, allPointValues, context, viewPoints) => {
   console.log('finna render', path);
   const webmWriter = await window.hudley.createWebmWriter(path);
-  console.log(webmWriter);
+  const step = 100 / 30; // hundredths of a second (cs) between frames
+  let rtc = allPointValues[0].rtc;
+  let pointIndex = 0;
 
-  allPointValues.forEach((pointValues) => {
-    renderFrame(pointValues, context)(viewPoints);
+  while (pointIndex < allPointValues.length - 1) {
+    renderFrame(allPointValues[pointIndex], context)(viewPoints);
     webmWriter.addFrame(context.canvas);
-  });
+    if (rtc > allPointValues[pointIndex + 1].rtc) {
+      pointIndex += 1;
+    }
+    rtc += step;
+  }
+
+  // allPointValues.forEach((pointValues) => {
+  //   renderFrame(pointValues, context)(viewPoints);
+  //   webmWriter.addFrame(context.canvas);
+  // });
 
   await webmWriter.complete();
   console.log('done rendering', path);

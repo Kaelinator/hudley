@@ -61,12 +61,12 @@
           throw new Error('No data points in datalog');
         }
         datalog.value = parsedDatalog;
+        console.log(parsedDatalog);
         availablePoints.value = Object.keys(parsedDatalog.points[0]);
         watchEffect(() => {
           if (canvas.value) {
+            // component is mounted
             watch(viewPoints, renderFrame(datalog.value.points[0], canvas.value.getContext('2d')));
-          } else {
-            // not mounted yet, or the element was unmounted (e.g. by v-if)
           }
         })
       })
