@@ -28,6 +28,18 @@
       with 
       <input v-model="viewPoints[index].precision" type="number" min="0" step="1" />
       decimal place{{ viewPoints[index].precision === 1 ? '' : 's' }}
+      and apply
+      <select v-model="viewPoints[index].f">
+        <option value="kpaToAbsolutePsi">kPa to absolute psi</option>
+        <option value="kpaToGuagePsi">kPa to guage psi</option>
+        <option value="gasolinePoundsPerHourToGallonsPerHour">gas lbs/hr to gal/hr</option>
+        <option value="fahrenheitToCelsius">&#176;F to &#176;C</option>
+        <option value="celsiusToFahrenheit">&#176;C to &#176;F</option>
+      </select>
+      function
+      and
+      <input v-model="viewPoints[index].includeUnitOfMeasure" type="checkbox" /> 
+      include unit of measure
       <button @click="viewPoints.splice(index, 1)">delete</button>
     </div>
     <button @click="viewPoints.push({ point: '', location: '', precision: 0 })">Add datapoint to view</button>

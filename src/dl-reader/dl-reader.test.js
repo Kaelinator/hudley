@@ -20,6 +20,7 @@ test('reads small datalog', async () => {
     battery: 13.926725387573242,
     oilPressure: 74.45286560058594,
     tps: 0.18066267669200897,
+    rtc: 219295876,
   });
   expect(data.points.length).toBe(165);
   expect(data.points[10]).toEqual({
@@ -37,6 +38,7 @@ test('reads small datalog', async () => {
     rpm: 1216.692626953125,
     targetAFR: 13.807195663452148,
     tps: 0.14862030744552612,
+    rtc: 219296076,
   });
   expect(data.points[100]).toEqual({
     afr: 11.580077171325684,
@@ -53,6 +55,7 @@ test('reads small datalog', async () => {
     rpm: 1145.6617431640625,
     targetAFR: 13.799999237060547,
     tps: 1.1090257167816162,
+    rtc: 219297876,
   });
   expect(data.points[163]).toEqual({
     afr: 12.163944244384766,
@@ -69,6 +72,7 @@ test('reads small datalog', async () => {
     rpm: 1041.2421875,
     targetAFR: 13.799999237060547,
     tps: 0.44691383838653564,
+    rtc: 219299136,
   });
 });
 
@@ -91,6 +95,7 @@ test('reads medium datalog', async () => {
     rpm: 1374.3946533203125,
     targetAFR: 13.843148231506348,
     tps: 0.0025552622973918915,
+    rtc: 195465854,
   });
   expect(data.points.length).toBe(3791);
   expect(data.points[1316]).toEqual({
@@ -108,6 +113,7 @@ test('reads medium datalog', async () => {
     rpm: 4733.0439453125,
     targetAFR: 12.5,
     tps: 47.709190368652344,
+    rtc: 195539194,
   });
   expect(data.points[3789]).toEqual({
     afr: 13.404864311218262,
@@ -124,5 +130,6 @@ test('reads medium datalog', async () => {
     rpm: 1602.9656982421875,
     targetAFR: 13.638270378112793,
     tps: 6.593242645263672,
+    rtc: 195676814,
   });
 });
