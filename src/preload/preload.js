@@ -1,7 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const { open } = require('fs/promises');
 const WebMWriter = require('webm-writer');
-// const createWebmWriter = require('./webm-renderer/writer');
 
 contextBridge.exposeInMainWorld('hudley', {
   readDatalog: (datalogPath) => ipcRenderer.invoke('readDatalog', datalogPath),
