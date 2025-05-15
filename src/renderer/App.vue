@@ -14,10 +14,13 @@
     </div>
 
     <div :class="$style.content">
-      <button @click="changeTab">Change Tab</button>
-      <Tabulator tabKey="main-content">
-        <h1 id="tab0">yuh0</h1>
-        <h1 id="tab1">yuh1</h1>
+      <div :class="$style.tabChangeWrapper">
+        <button @click="changeTab('tab0')">Tab0</button>
+        <button @click="changeTab('tab1')">Tab1</button>
+      </div>
+      <Tabulator tabKey="main-content-tab-id">
+        <div id="tab0">yuh0</div>
+        <div id="tab1">yuh1</div>
       </Tabulator>
     </div>
 
@@ -37,9 +40,9 @@
   import Tabulator from './components/Tabulator.vue';
 
   const tab = ref('tab0');
-  provide('main-content', tab);
-  const changeTab = () => {
-    tab.value = 'tab' + (+tab.value.slice(-1)[0] + 1) % 2;
+  provide('main-content-tab-id', tab);
+  const changeTab = (tabName) => {
+    tab.value = tabName;
   }
 </script>
 
@@ -59,5 +62,10 @@
   .content {
     background: #E2E2E2;
     height: 100vh;
+  }
+
+  .tabChangeWrapper {
+    background: red;
+    width: 100%;
   }
 </style>
