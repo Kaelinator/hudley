@@ -14,6 +14,11 @@
     </div>
 
     <div :class="$style.content">
+      <button @click="changeTab">Change Tab</button>
+      <Tabulator tabKey="main-content">
+        <h1 id="tab0">yuh0</h1>
+        <h1 id="tab1">yuh1</h1>
+      </Tabulator>
     </div>
 
     <div :class="$style.bar">
@@ -27,7 +32,15 @@
 </template>
 
 <script setup>
+  import { ref, provide } from 'vue';
   import CollapsibleSection from './components/CollapsibleSection.vue';
+  import Tabulator from './components/Tabulator.vue';
+
+  const tab = ref('tab0');
+  provide('main-content', tab);
+  const changeTab = () => {
+    tab.value = 'tab' + (+tab.value.slice(-1)[0] + 1) % 2;
+  }
 </script>
 
 <style module>
@@ -38,7 +51,7 @@
   }
 
   .bar {
-    background: #d9d9d9;
+    background: #D9D9D9;
     overflow-y: scroll;
     overflow-x: hidden;
   }
