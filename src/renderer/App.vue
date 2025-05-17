@@ -15,12 +15,12 @@
 
     <div :class="$style.content">
       <div :class="$style.tabChangeWrapper">
-        <button @click="changeTab('tab0')">Tab0</button>
-        <button @click="changeTab('tab1')">Tab1</button>
+        <button :class="[$style.tabChangeButton, tab === 'tab0' && $style.current]" @click="changeTab('tab0')"><BsEasel /></button>
+        <button :class="[$style.tabChangeButton, tab === 'tab1' && $style.current]" @click="changeTab('tab1')"><ImTable /></button>
       </div>
       <Tabulator tabKey="main-content-tab-id">
-        <div id="tab0">yuh0</div>
-        <div id="tab1">yuh1</div>
+        <div id="tab0">Canvas</div>
+        <div id="tab1">Table</div>
       </Tabulator>
     </div>
 
@@ -36,6 +36,8 @@
 
 <script setup>
   import { ref, provide } from 'vue';
+  import { ImTable } from 'vue-icons-plus/im';
+  import { BsEasel } from 'vue-icons-plus/bs';
   import CollapsibleSection from './components/CollapsibleSection.vue';
   import Tabulator from './components/Tabulator.vue';
 
@@ -64,8 +66,17 @@
     height: 100vh;
   }
 
-  .tabChangeWrapper {
-    background: red;
-    width: 100%;
+  .tabChangeButton {
+    color: white;
+    background: black;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  .current {
+    color: black;
+    background: white;
   }
 </style>
