@@ -19,7 +19,9 @@
         <button :class="[$style.tabChangeButton, tab === 'tab1' && $style.current]" @click="changeTab('tab1')"><ImTable /></button>
       </div>
       <Tabulator tabKey="main-content-tab-id">
-        <div id="tab0">Canvas</div>
+        <div id="tab0" :class="$style.canvasWrapper">
+          <Canvas width=1280 height=720 />
+        </div>
         <div id="tab1">Table</div>
       </Tabulator>
     </div>
@@ -38,8 +40,10 @@
   import { ref, provide } from 'vue';
   import { ImTable } from 'vue-icons-plus/im';
   import { BsEasel } from 'vue-icons-plus/bs';
+
   import CollapsibleSection from './components/CollapsibleSection.vue';
   import Tabulator from './components/Tabulator.vue';
+  import Canvas from './components/Canvas.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -64,6 +68,11 @@
   .content {
     background: #E2E2E2;
     height: 100vh;
+    display: grid;
+  }
+
+  .tabChangeWrapper {
+    position: absolute;
   }
 
   .tabChangeButton {
@@ -75,8 +84,22 @@
     cursor: pointer;
   }
 
+  .canvasWrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    margin: 0 10px 0 10px;
+  }
+
   .current {
     color: black;
     background: white;
+  }
+</style>
+
+<style>
+  .tabulator {
+    display: grid;
+    align-self: stretch;
   }
 </style>
