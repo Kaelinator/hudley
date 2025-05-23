@@ -20,7 +20,7 @@
       </div>
       <Tabulator tabKey="main-content-tab-id">
         <div id="tab0" :class="$style.canvasWrapper">
-          <Canvas width=1280 height=720 />
+          <Canvas :width=1280 :height=720 />
         </div>
         <div id="tab1">Table</div>
       </Tabulator>

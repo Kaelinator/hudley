@@ -1,18 +1,33 @@
 <template>
   <div :class="$style.displayResizer">
-    <img :class="$style.display" src="https://i.ytimg.com/vi/6XDWPp9RNJk/maxresdefault.jpg" />
+    <img :class="$style.display" :src="frame" />
     <canvas :class="$style.displayNone" ref="renderer" :width="width" :height="height" />
   </div>
 </template>
 
 <script setup>
-  import { defineProps } from 'vue';
+  import { defineProps, ref, useTemplateRef, watchEffect } from 'vue';
   const props = defineProps({
     width: Number,
     height: Number,
   });
 
+  const frame = ref("");
 
+  const canvas = useTemplateRef('renderer');
+  watchEffect(() => {
+    if (canvas.value) {
+      // canvas is mounted
+      const context = canvas.value.getContext('2d');
+      context.font = 'bold 144px sans-serif';
+      context.fillStyle = 'white';
+      context.shadowColor = 'rgb(0 0 0 / 50%)';
+      context.shadowBlur = 8;
+      context.textAlign = 'center';
+      context.fillText("yuh yuh yuh", props.width / 2, props.height / 2);
+      frame.value = canvas.value.toDataURL('image/webp');
+    }
+  })
 </script>
 
 <style module>
@@ -31,8 +46,8 @@
     object-fit: contain;
     box-sizing: border-box;
     background-image: repeating-conic-gradient(#606060 0% 25%, #bdbdbd 0% 50%);
-    background-position: 0 0, 45px 45px;
-    background-size: 90px 90px;
+    background-position: 0 0, 40px 40px;
+    background-size: 80px 80px;
     background-color: #bdbdbd;
     border: 1px solid #000000;
   }
