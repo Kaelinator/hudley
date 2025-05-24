@@ -2,9 +2,9 @@
   <div :class="$style.wrapper">
     <div :class="$style.bar">
       <CollapsibleSection title="Project Settings">
-        <li v-for="index in 10" :key="index">
-          {{ index }}
-        </li>
+        <div :class="$style.projectSettingsForm">
+          <FilePicker @change="console.log" placeholder="select your datalog.dl" accept=".dl" />
+        </div>
       </CollapsibleSection>
       <CollapsibleSection title="Data Points">
         <li v-for="index in 50" :key="index">
@@ -44,6 +44,7 @@
   import CollapsibleSection from './components/CollapsibleSection.vue';
   import Tabulator from './components/Tabulator.vue';
   import Canvas from './components/Canvas.vue';
+  import FilePicker from './components/FilePicker.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -94,6 +95,10 @@
   .current {
     color: black;
     background: white;
+  }
+
+  .projectSettingsForm {
+    padding: 0 10px;
   }
 </style>
 
