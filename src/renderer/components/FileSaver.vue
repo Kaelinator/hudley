@@ -1,13 +1,13 @@
 <template>
   <div :class="$style.formWrapper">
     <input :value="path?.name" :class="$style.textBox" type="text" disabled="true" :placeholder="placeholder"></input>
-    <label :for="id" :class="$style.editButton"><BsPencilFill /></label>
-    <input @change="pathChanged" :id="id" :class="$style.displayNone" type="file" :accept="accept"/>
+    <button @click="openSaveDialog" :class="$style.editButton"><BsPencilFill /></button>
   </div>
 </template>
 
 <script setup>
   import { ref, defineEmits, defineProps, useId } from 'vue';
+  // import { dialog } from 'electron';
   import { BsPencilFill } from 'vue-icons-plus/bs';
 
   const props = defineProps({
@@ -20,6 +20,10 @@
   const id = useId();
 
   const path = ref(null);
+
+  const openSaveDialog = () => {
+    
+  }
 
   const pathChanged = (e) => {
     if (e.target.files.length === 1) {
