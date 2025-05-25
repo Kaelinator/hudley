@@ -3,8 +3,8 @@
     <div :class="$style.bar">
       <CollapsibleSection title="Project Settings">
         <div :class="$style.projectSettingsForm">
-          <FilePicker @change="console.log" placeholder="select your datalog.dl" accept=".dl" />
-          <FileSaver @change="console.log" placeholder="select your output.webm" accept=".webm" />
+          <FilePicker @change="console.log" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
+          <FilePicker @change="console.log" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
         </div>
       </CollapsibleSection>
       <CollapsibleSection title="Data Points">
@@ -46,12 +46,26 @@
   import Tabulator from './components/Tabulator.vue';
   import Canvas from './components/Canvas.vue';
   import FilePicker from './components/FilePicker.vue';
-  import FileSaver from './components/FileSaver.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
   const changeTab = (tabName) => {
     tab.value = tabName;
+  }
+
+  const openDatalogOptions = {
+    filters: [
+      { name: 'Decompressed Datalog', extensions: ['dl'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+    properties: ['openFile']
+  };
+
+  const saveVideoOptions = {
+    filters: [
+      { name: 'WebM Video', extensions: ['webm'] },
+    ],
+    properties: ['showOverwriteConfirmation']
   }
 </script>
 
