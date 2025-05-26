@@ -16,9 +16,10 @@
             <option value="59.94">59.94</option>
             <option value="60">60</option>
           </Select>
-          <NumericUpDown @change="console.log ":min="0" :startValue="1920" label="Canvas width:" />
-          <NumericUpDown @change="console.log ":min="0" :startValue="1080" label="Canvas height:" />
+          <NumericUpDown @change="w => canvasWidth = w" :min="0" :startValue="canvasWidth" label="Canvas width:" />
+          <NumericUpDown @change="h => canvasHeight = h" :min="0" :startValue="canvasHeight" label="Canvas height:" />
           <FilePicker @change="console.log" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
+          <Button @click="console.log" :disabled="!datalog">Render</Button>
         </div>
       </CollapsibleSection>
       <CollapsibleSection title="Data Points">
@@ -35,7 +36,7 @@
       </div>
       <Tabulator tabKey="main-content-tab-id">
         <div id="tab0" :class="$style.canvasWrapper">
-          <Canvas :width=1280 :height=720 />
+          <Canvas :width="canvasWidth" :height="canvasHeight" />
         </div>
         <div id="tab1">Table</div>
       </Tabulator>
@@ -62,6 +63,7 @@
   import FilePicker from './components/FilePicker.vue';
   import NumericUpDown from './components/NumericUpDown.vue';
   import Select from './components/Select.vue';
+  import Button from './components/Button.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -102,6 +104,9 @@
     endPoint.value = point;
     // more to come
   };
+
+  const canvasWidth = ref(1280);
+  const canvasHeight = ref(720);
 </script>
 
 <style module>
