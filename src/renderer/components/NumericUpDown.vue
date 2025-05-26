@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-  import { defineEmits, defineProps, useId, ref } from 'vue';
+  import { defineEmits, defineProps, useId, ref, watch } from 'vue';
   import { EpCaretBottom, EpCaretTop } from 'vue-icons-plus/ep';
 
   const props = defineProps({
@@ -29,6 +29,11 @@
   const id = useId();
   const value = ref(props.startValue);
   const emit = defineEmits(['change']);
+
+  watch(() => props.startValue, (startValue) => {
+    value.value = startValue;
+    emit('change', startValue);
+  });
 
   const add = (n) => {
     const newValue = value.value + n;

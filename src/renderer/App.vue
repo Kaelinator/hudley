@@ -5,7 +5,7 @@
         <div :class="$style.projectSettingsForm">
           <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
           <NumericUpDown @change="setStartPoint" :min="0" :max="endPoint" :disabled="!datalogPath" label="Start point:" />
-          <NumericUpDown @change="setEndPoint" :min="startPoint" :max="100" :disabled="!datalogPath" label="End point:" />
+          <NumericUpDown @change="setEndPoint" :startValue="datalog?.points.length" :min="startPoint" :max="datalog?.points.length" :disabled="!datalogPath" label="End point:" />
           <Select @change="console.log" label="Framerate:" startValue="29.97">
             <option value="23.976">23.976</option>
             <option value="24">24</option>
@@ -85,8 +85,10 @@
   }
 
   const datalogPath = ref();
-  const setDatalogPath = (path) => {
+  const datalog = ref();
+  const setDatalogPath = async (path) => {
     datalogPath.value = path;
+    datalog.value = await window.hudley.readDatalog(path);
   };
   
   const startPoint = ref(0);
