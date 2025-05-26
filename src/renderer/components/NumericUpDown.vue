@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.wrapper">
     <label :for="id">
-      <slot></slot>
+      {{ props.label }}
     </label>
     <div :class="$style.inputWrapper">
       <input v-model="value" :class="$style.nud" :id="id" type="number" @change="hanldeChange" :disabled="disabled" />
@@ -14,19 +14,20 @@
 </template>
 
 <script setup>
-  import { defineProps, useId, ref } from 'vue';
+  import { defineEmits, defineProps, useId, ref } from 'vue';
   import { EpCaretBottom, EpCaretTop } from 'vue-icons-plus/ep';
 
   const props = defineProps({
+    label: String,
     min: Number,
     max: Number,
     step: { type: Number, default: 1 },
     startValue: { type: Number, default: 0 },
-    disabled: { type: Boolean, default: false }
+    disabled: { type: Boolean, default: false },
   });
 
   const id = useId();
-  const value = ref(0);
+  const value = ref(props.startValue);
   const emit = defineEmits(['change']);
 
   const add = (n) => {
@@ -40,12 +41,12 @@
     emit('change', newValue);
   };
 
-  const hanldeChange = (e) => {
-    const newValue = e.target.value < props.min
+  const hanldeChange = () => {
+    const newValue = value.value < props.min
       ? props.min
-      : e.target.value > props.max
+      : value.value > props.max
       ? props.max
-      : e.target.value;
+      : value.value;
 
     value.value = newValue;
     emit('change', newValue);
@@ -77,6 +78,7 @@
     background-color: white;
     color: black;
     width: 100px;
+    padding: 0;
   }
 
   .nud:disabled {

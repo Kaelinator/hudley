@@ -3,11 +3,21 @@
     <div :class="$style.bar">
       <CollapsibleSection title="Project Settings">
         <div :class="$style.projectSettingsForm">
-          <FilePicker @change="console.log" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
-          <NumericUpDown @change="console.log ":min="0" :max="100" disabled>Start point:</NumericUpDown>
-          <NumericUpDown @change="console.log ":min="0" :max="100" disabled>End point:</NumericUpDown>
-          <NumericUpDown @change="console.log ":min="0">Canvas width:</NumericUpDown>
-          <NumericUpDown @change="console.log ":min="0">Canvas height:</NumericUpDown>
+          <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
+          <NumericUpDown @change="setStartPoint" :min="0" :max="endPoint" :disabled="!datalogPath" label="Start point:" />
+          <NumericUpDown @change="setEndPoint" :min="startPoint" :max="100" :disabled="!datalogPath" label="End point:" />
+          <Select @change="console.log" label="Framerate:" startValue="29.97">
+            <option value="23.976">23.976</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="29.97">29.97</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="59.94">59.94</option>
+            <option value="60">60</option>
+          </Select>
+          <NumericUpDown @change="console.log ":min="0" :startValue="1920" label="Canvas width:" />
+          <NumericUpDown @change="console.log ":min="0" :startValue="1080" label="Canvas height:" />
           <FilePicker @change="console.log" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
         </div>
       </CollapsibleSection>
@@ -51,6 +61,7 @@
   import Canvas from './components/Canvas.vue';
   import FilePicker from './components/FilePicker.vue';
   import NumericUpDown from './components/NumericUpDown.vue';
+  import Select from './components/Select.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -72,6 +83,23 @@
     ],
     properties: ['showOverwriteConfirmation']
   }
+
+  const datalogPath = ref();
+  const setDatalogPath = (path) => {
+    datalogPath.value = path;
+  };
+  
+  const startPoint = ref(0);
+  const setStartPoint = (point) => {
+    startPoint.value = point;
+    // more to come
+  };
+
+  const endPoint = ref(0);
+  const setEndPoint = (point) => {
+    endPoint.value = point;
+    // more to come
+  };
 </script>
 
 <style module>
