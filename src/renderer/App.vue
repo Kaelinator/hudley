@@ -4,6 +4,10 @@
       <CollapsibleSection title="Project Settings">
         <div :class="$style.projectSettingsForm">
           <FilePicker @change="console.log" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
+          <NumericUpDown @change="console.log ":min="0" :max="100" disabled>Start point:</NumericUpDown>
+          <NumericUpDown @change="console.log ":min="0" :max="100" disabled>End point:</NumericUpDown>
+          <NumericUpDown @change="console.log ":min="0">Canvas width:</NumericUpDown>
+          <NumericUpDown @change="console.log ":min="0">Canvas height:</NumericUpDown>
           <FilePicker @change="console.log" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
         </div>
       </CollapsibleSection>
@@ -46,6 +50,7 @@
   import Tabulator from './components/Tabulator.vue';
   import Canvas from './components/Canvas.vue';
   import FilePicker from './components/FilePicker.vue';
+  import NumericUpDown from './components/NumericUpDown.vue';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -115,6 +120,9 @@
 
   .projectSettingsForm {
     padding: 0 10px;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
   }
 </style>
 

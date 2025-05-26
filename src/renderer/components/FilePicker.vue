@@ -47,7 +47,7 @@
 
   .textBox {
     border: none;
-    width: 100%;
+    flex-grow: 1;
   }
 
   .textBox:disabled {
@@ -66,6 +66,16 @@
     cursor: pointer;
     justify-content: center;
     align-items: center;
+  }
+
+  .editButton:hover {
+    background-color: #444;
+    color: white;
+  }
+
+  .editButton:active {
+    background-color: white;
+    color: black;
   }
 
   .displayNone {
