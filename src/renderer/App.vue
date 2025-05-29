@@ -6,7 +6,7 @@
           <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
           <NumericUpDown @change="setStartPoint" :min="0" :max="endPoint" :disabled="!datalogPath" label="Start point:" />
           <NumericUpDown @change="setEndPoint" :startValue="datalog?.points.length" :min="startPoint" :max="datalog?.points.length" :disabled="!datalogPath" label="End point:" />
-          <Select @change="console.log" label="Framerate:" startValue="29.97">
+          <Select @change="setFramerate" label="Framerate:" :startValue="framerate">
             <option value="23.976">23.976</option>
             <option value="24">24</option>
             <option value="25">25</option>
@@ -18,8 +18,8 @@
           </Select>
           <NumericUpDown @change="w => canvasWidth = w" :min="0" :startValue="canvasWidth" label="Canvas width:" />
           <NumericUpDown @change="h => canvasHeight = h" :min="0" :startValue="canvasHeight" label="Canvas height:" />
-          <FilePicker @change="console.log" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
-          <Button @click="console.log" :disabled="!datalog">Render</Button>
+          <FilePicker @change="setRenderPath" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
+          <Button @click="render" :disabled="!datalog">Render</Button>
         </div>
       </CollapsibleSection>
       <CollapsibleSection title="Data Points">
@@ -50,10 +50,11 @@
       </CollapsibleSection>
     </div>
   </div>
+  <canvas :class="$style.virtualCanvas" ref="virtualCanvas" :width="canvasWidth" :height="canvasHeight"></canvas>
 </template>
 
 <script setup>
-  import { ref, provide } from 'vue';
+  import { ref, provide, useTemplateRef, watchEffect } from 'vue';
   import { ImTable } from 'vue-icons-plus/im';
   import { BsEasel } from 'vue-icons-plus/bs';
 
@@ -64,6 +65,7 @@
   import NumericUpDown from './components/NumericUpDown.vue';
   import Select from './components/Select.vue';
   import Button from './components/Button.vue';
+  import * as canvasUtil from './utils/canvas';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -96,17 +98,45 @@
   const startPoint = ref(0);
   const setStartPoint = (point) => {
     startPoint.value = point;
-    // more to come
   };
 
   const endPoint = ref(0);
   const setEndPoint = (point) => {
     endPoint.value = point;
-    // more to come
   };
 
   const canvasWidth = ref(1280);
   const canvasHeight = ref(720);
+
+  const framerate = ref(30);
+  const setFramerate = (rate) => {
+    framerate.value = +rate;
+  };
+
+  const renderPath = ref();
+  const setRenderPath = (path) => {
+    renderPath.value = path;
+  };
+
+  const virtualCanvas = useTemplateRef('virtualCanvas');
+  watchEffect(() => {
+    if (virtualCanvas.value) {
+      // canvas is mounted
+      // do something about it
+    }
+  });
+
+  const render = () => {
+    const context = virtualCanvas.value.getContext('2d');
+    const options = {
+      startPoint: startPoint.value,
+      endPoint: endPoint.value,
+      framerate: framerate.value,
+      renderPath: renderPath.value,
+    };
+    console.log(options);
+    canvasUtil.render(context, options);
+  }
 </script>
 
 <style module>
@@ -158,6 +188,10 @@
     display: flex;
     flex-flow: column nowrap;
     gap: 10px;
+  }
+
+  .virtualCanvas {
+    display: none;
   }
 </style>
 
