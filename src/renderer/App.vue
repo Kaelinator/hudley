@@ -6,7 +6,7 @@
           <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
           <NumericUpDown @change="setStartPoint" :min="0" :max="endPoint" :disabled="!datalogPath" label="Start point:" />
           <NumericUpDown @change="setEndPoint" :startValue="datalog?.points.length" :min="startPoint" :max="datalog?.points.length" :disabled="!datalogPath" label="End point:" />
-          <Select @change="setFramerate" label="Framerate:" :startValue="framerate">
+          <Select @change="setFramerate" label="Framerate:" :startValue="framerate.toFixed()">
             <option value="23.976">23.976</option>
             <option value="24">24</option>
             <option value="25">25</option>
@@ -127,14 +127,13 @@
   });
 
   const render = () => {
-    const context = virtualCanvas.value.getContext('2d');
+    const context = virtualCanvas.value.getContext('2d', { willReadFrequently: true });
     const options = {
       startPoint: startPoint.value,
       endPoint: endPoint.value,
       framerate: framerate.value,
       renderPath: renderPath.value,
     };
-    console.log(options);
     canvasUtil.render(context, options);
   }
 </script>

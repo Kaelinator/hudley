@@ -6,9 +6,7 @@ let writer;
 let outputFileHandle;
 
 const initRender = async (_event, renderPath, options) => {
-
-  if (outputFileHandle)
-    await outputFileHandle.close();
+  if (outputFileHandle) await outputFileHandle.close();
 
   outputFileHandle = await open(renderPath, 'w+');
   writer = new WebMWriter({

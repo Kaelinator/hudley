@@ -6,4 +6,4 @@ export const registerHandlers = () => {
   registerFileHandlers();
   registerDatalogHandlers();
   registerRenderHandlers();
-}
+};
