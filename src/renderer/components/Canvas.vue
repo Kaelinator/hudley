@@ -7,6 +7,9 @@
 
 <script setup>
   import { defineProps, ref, useTemplateRef, watchEffect } from 'vue';
+
+  import { renderFrame } from '../utils/canvas';
+
   const props = defineProps({
     width: Number,
     height: Number,
@@ -19,15 +22,9 @@
     if (canvas.value) {
       // canvas is mounted
       const context = canvas.value.getContext('2d');
-      context.font = 'bold 144px sans-serif';
-      context.fillStyle = 'white';
-      context.shadowColor = 'rgb(0 0 0 / 50%)';
-      context.shadowBlur = 8;
-      context.textAlign = 'center';
-      context.fillText("yuh yuh yuh", props.width / 2, props.height / 2);
-      frame.value = canvas.value.toDataURL('image/webp');
+      frame.value = renderFrame(context).frame;
     }
-  })
+  });
 </script>
 
 <style module>
