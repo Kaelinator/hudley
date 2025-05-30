@@ -134,7 +134,9 @@
       framerate: framerate.value,
       renderPath: renderPath.value,
     };
-    canvasUtil.render(context, options);
+    canvasUtil.render(context, options)
+      .onProgress(console.log)
+      .onDone(console.log);
   }
 </script>
 
