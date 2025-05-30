@@ -19,7 +19,13 @@
           <NumericUpDown @change="w => canvasWidth = w" :min="0" :startValue="canvasWidth" label="Canvas width:" />
           <NumericUpDown @change="h => canvasHeight = h" :min="0" :startValue="canvasHeight" label="Canvas height:" />
           <FilePicker @change="setRenderPath" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
-          <Button @click="render" :disabled="!datalog">Render</Button>
+          <Button v-if="!renderInProgress" @click="render" :disabled="!datalog">Render</Button>
+          <ProgressBar v-else :progress="progress.progress" @cancel="cancelRender" cancellable>
+            Rendering: {{ (progress.progress * 100).toFixed(0) }}%
+            {{ new Date(progress.elapsedTime).toISOString().substring(11, 19) }}
+            /
+            {{ new Date(progress.estimatedRunTime).toISOString().substring(11, 19) }}
+          </ProgressBar>
         </div>
       </CollapsibleSection>
       <CollapsibleSection title="Data Points">
@@ -65,6 +71,7 @@
   import NumericUpDown from './components/NumericUpDown.vue';
   import Select from './components/Select.vue';
   import Button from './components/Button.vue';
+  import ProgressBar from './components/ProgressBar.vue';
   import * as canvasUtil from './utils/canvas';
 
   const tab = ref('tab0');
@@ -126,18 +133,34 @@
     }
   });
 
+  const progress = ref({
+    frame: 0,
+    totalFrames: 0,
+    progress: 0,
+    elapsedTime: 0,
+    estimatedRunTime: 0,
+  });
+  const renderInProgress = ref(false);
+  let cancelRender;
   const render = () => {
+
     const context = virtualCanvas.value.getContext('2d', { willReadFrequently: true });
+
     const options = {
       startPoint: startPoint.value,
       endPoint: endPoint.value,
       framerate: framerate.value,
       renderPath: renderPath.value,
     };
-    canvasUtil.render(context, options)
-      .onProgress(console.log)
-      .onDone(console.log);
-  }
+
+    const { cancel } = canvasUtil.render(context, options)
+      .onProgress((p) => progress.value = p)
+      .onDone(() => renderInProgress.value = false);
+
+    cancelRender = cancel;
+    renderInProgress.value = true;
+  };
+
 </script>
 
 <style module>
