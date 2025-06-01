@@ -28,22 +28,59 @@ export const renderFrame = (context) => {
   };
 };
 
-export const render = async (context, {
+export const render = (context, {
   startPoint, endPoint, framerate, renderPath,
 }) => {
-  await window.hudley.initRender(renderPath, {
+
+  let cancelled = false;
+  let progressHandler;
+  let doneHandler;
+
+  const api = {};
+
+  api['onProgress'] = (f) => {
+    progressHandler = f;
+    return api;
+  };
+
+  api['onDone'] = (f) => {
+    doneHandler = f;
+    return api;
+  };
+
+  api['cancel'] = () => {
+    cancelled = true;
+  };
+
+  window.hudley.initRender(renderPath, {
     quality: 0.99999,
     frameRate: framerate,
     transparent: true,
-  });
+  }).then(async () => {
+      const startTime = Date.now();
+      /* eslint-disable no-await-in-loop */
+      for (let i = startPoint; i < endPoint; i += 1) {
+        const { frame, alpha } = renderFrame(context);
+        await window.hudley.addFrame(frame, alpha);
+        if (i != startPoint) {
+          progressHandler({
+            frame: i - startPoint,
+            totalFrames: endPoint - startPoint,
+            progress: (i - startPoint) / (endPoint - startPoint),
+            elapsedTime: Date.now() - startTime,
+            estimatedRunTime: (endPoint - startPoint) / (i - startPoint) * (Date.now() - startTime),
+          });
+        }
+        if (cancelled) {
+          break;
+        }
+      }
+      /* eslint-enable no-await-in-loop */
 
-  /* eslint-disable no-await-in-loop */
-  for (let i = startPoint; i < endPoint; i += 1) {
-    const { frame, alpha } = renderFrame(context);
-    await window.hudley.addFrame(frame, alpha);
-  }
-  /* eslint-enable no-await-in-loop */
+      await window.hudley.completeRender();
+      doneHandler();
+      console.log('done');
+    });
 
-  await window.hudley.completeRender();
-  console.log('done');
+  return api;
 };
