@@ -52,7 +52,7 @@
   .progressText {
     font-size: 10pt;
     position: relative;
-    margin-top: -25px;
+    margin-top: -23px;
     color: white;
     /* mix-blend-mode: difference; */
     padding-left: 5px;

@@ -62,13 +62,15 @@ export const render = (context, {
       for (let i = startPoint; i < endPoint; i += 1) {
         const { frame, alpha } = renderFrame(context);
         await window.hudley.addFrame(frame, alpha);
-        progressHandler({
-          frame: i - startPoint,
-          totalFrames: endPoint - startPoint,
-          progress: (i - startPoint) / (endPoint - startPoint),
-          elapsedTime: Date.now() - startTime,
-          estimatedRunTime: (endPoint - startPoint) / (i - startPoint) * (Date.now() - startTime),
-        });
+        if (i != startPoint) {
+          progressHandler({
+            frame: i - startPoint,
+            totalFrames: endPoint - startPoint,
+            progress: (i - startPoint) / (endPoint - startPoint),
+            elapsedTime: Date.now() - startTime,
+            estimatedRunTime: (endPoint - startPoint) / (i - startPoint) * (Date.now() - startTime),
+          });
+        }
         if (cancelled) {
           break;
         }

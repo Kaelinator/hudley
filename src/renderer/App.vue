@@ -133,13 +133,14 @@
     }
   });
 
-  const progress = ref({
+  const defaultProgress = {
     frame: 0,
     totalFrames: 0,
     progress: 0,
     elapsedTime: 0,
     estimatedRunTime: 0,
-  });
+  };
+  const progress = ref(defaultProgress);
   const renderInProgress = ref(false);
   let cancelRender;
   const render = () => {
@@ -155,7 +156,10 @@
 
     const { cancel } = canvasUtil.render(context, options)
       .onProgress((p) => progress.value = p)
-      .onDone(() => renderInProgress.value = false);
+      .onDone(() => {
+        renderInProgress.value = false;
+        progress.value = defaultProgress;
+      });
 
     cancelRender = cancel;
     renderInProgress.value = true;
