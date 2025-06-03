@@ -1,38 +1,41 @@
-export const {
+export const units = {
   /* temperature */
-  F: new Symbol('fahrenheit'),
-  C: new Symbol('celcius'),
+  F: Symbol.for('fahrenheit'),
+  C: Symbol.for('celcius'),
 
   /* pressure */
-  PSIA: new Symbol('absolute pounds per square inch'),
-  PSIG: new Symbol('guage pounds per square inch'),
-  KPA: new Symbol('kilopascals'),
-  BAR: new Symbol('bar'),
+  PSIA: Symbol.for('absolute pounds per square inch'),
+  PSIG: Symbol.for('guage pounds per square inch'),
+  KPA: Symbol.for('kilopascals'),
+  BAR: Symbol.for('bar'),
 
   /* flow */
-  GPH: new Symbol('gallons per hour'),
-  LPH: new Symbol('liters per hour'),
-  GLBPH: new Symbol('pounds of gasoline per hour'),
+  GPH: Symbol.for('gallons per hour'),
+  LPH: Symbol.for('liters per hour'),
+  GLBPH: Symbol.for('pounds of gasoline per hour'),
 
   /* time */
-  MS: new Symbol('milliseconds'),
-  S: new Symbol('seconds'),
-  H: new Symbol('hour'),
+  MS: Symbol.for('milliseconds'),
+  S: Symbol.for('seconds'),
+  H: Symbol.for('hour'),
 
   /* part */
-  TO1: new Symbol('ratio to 1'),
-  PERCENT: new Symbol('percent'),
+  TO1: Symbol.for('ratio to 1'),
+  PERCENT: Symbol.for('percent'),
 
   /* frequency */
-  RPM: new Symbol('rotations per minute'),
-  HZ: new Symbol('hertz'),
+  RPM: Symbol.for('rotations per minute'),
+  HZ: Symbol.for('hertz'),
 
   /* charge */
-  V: new Symbol('volts'),
+  V: Symbol.for('volts'),
 
   /* current */
-  A: new Symbol('amperes'),
+  A: Symbol.for('amperes'),
 
   /* resistance */
-  OHM: new Symbol('ohms'),
+  OHM: Symbol.for('ohms'),
+
+  /* None */
+  DIMENSIONLESS: Symbol.for('dimensionless'),
 };

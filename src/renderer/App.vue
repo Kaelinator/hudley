@@ -30,7 +30,7 @@
       </CollapsibleSection>
       <CollapsibleSection title="Data Points" v-if="datalog">
         <div :class="$style.dataPointList">
-          <DataPoint v-for="datapoint in Object.keys(datalog.points[0])" :displayName="datapoint" />
+          <DataPoint v-for="datapoint in Object.keys(datalog.points[0])" :displayName="datapoint" editable />
         </div>
       </CollapsibleSection>
     </div>
