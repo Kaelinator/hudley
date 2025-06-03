@@ -28,10 +28,10 @@
           </ProgressBar>
         </div>
       </CollapsibleSection>
-      <CollapsibleSection title="Data Points">
-        <li v-for="index in 50" :key="index">
-          {{ index }}
-        </li>
+      <CollapsibleSection title="Data Points" v-if="datalog">
+        <div :class="$style.dataPointList">
+          <DataPoint v-for="datapoint in Object.keys(datalog.points[0])" :displayName="datapoint" />
+        </div>
       </CollapsibleSection>
     </div>
 
@@ -72,6 +72,8 @@
   import Select from './components/Select.vue';
   import Button from './components/Button.vue';
   import ProgressBar from './components/ProgressBar.vue';
+  import DataPoint from './components/DataPoint.vue';
+
   import * as canvasUtil from './utils/canvas';
 
   const tab = ref('tab0');
@@ -220,6 +222,12 @@
 
   .virtualCanvas {
     display: none;
+  }
+
+  .dataPointList {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
   }
 </style>
 
