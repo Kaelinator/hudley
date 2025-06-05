@@ -27,6 +27,10 @@ export const units = {
   RPM: Symbol.for('rotations per minute'),
   HZ: Symbol.for('hertz'),
 
+  /* angle */
+  DEG: Symbol.for('degrees'),
+  RAD: Symbol.for('radians'),
+
   /* charge */
   V: Symbol.for('volts'),
 

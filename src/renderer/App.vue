@@ -30,7 +30,7 @@
       </CollapsibleSection>
       <CollapsibleSection title="Data Points" v-if="datalog">
         <div :class="$style.dataPointList">
-          <DataPoint v-for="datapoint in Object.keys(datalog.points[0])" :displayName="datapoint" editable />
+          <DataPoint v-for="datapoint in Object.keys(datalog.units)" :name="datapoint" editable />
         </div>
       </CollapsibleSection>
     </div>
@@ -102,6 +102,7 @@
   const setDatalogPath = async (path) => {
     datalogPath.value = path;
     datalog.value = await window.hudley.readDatalog(path);
+    console.log(datalog.value);
   };
   
   const startPoint = ref(0);

@@ -2,7 +2,7 @@
   <div :class="$style.wrapper">
     <div :class="$style.barWrapper">
       <div>
-        {{ displayName }}
+        {{ props.name }}
       </div>
       <div :class="$style.buttonWrapper">
         <button v-if="props.editable" @click="editing = !editing" :class="$style.button">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div :class="[ $style.contentWrapper, !editing && $style.displayNone ]">
-      <TextBox @change="setDisplayName" label="Name:" :startValue="displayName" />
+      <TextBox @change="setDisplayName" label="Name:" :startValue="name" />
       <Select @change="setUnit" label="Unit of measure:" :startValue="Symbol.keyFor(unit)">
         <option v-for="u in Object.values(units)" :value="Symbol.keyFor(u)">{{ Symbol.keyFor(u) }}</option>
       </Select>
@@ -48,7 +48,6 @@
 
   const props = defineProps({
     name: String, 
-    displayName: String,
     unit: { type: Symbol, default: units.DIMENSIONLESS },
     editable: { type: Boolean, default: false },
   });
@@ -56,13 +55,13 @@
   const emit = defineEmits(['addToView']);
 
   const editing = ref(false);
-  const displayName = ref(props.displayName);
+  const name = ref(props.name);
   const unit = ref(props.unit);
   const populationStrategy = ref('manual');
   const formula = ref('');
 
-  const setDisplayName = (name) => {
-    displayName.value = name;
+  const setDisplayName = (newName) => {
+    name.value = newName;
   };
 
   const setUnit = (unit) => {
@@ -137,6 +136,4 @@
     padding: 0;
     overflow: hidden;
   }
-
-
 </style>

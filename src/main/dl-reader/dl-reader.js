@@ -1,4 +1,5 @@
 import { open } from 'node:fs/promises';
+import { units } from '../../shared/units';
 
 const DATALOG_SIGNATURE = 0x95365F;
 const DATAPOINT_LENGTH = 0x9D0;
@@ -15,7 +16,7 @@ const verifySignature = ({ bytesRead, buffer }) => {
   }
 };
 
-const getNullTerminatedString = ({ bytesRead, buffer }) => {
+const getUntilNullTerminatedString = ({ bytesRead, buffer }) => {
   if (bytesRead <= 0) {
     throw new Error('File ended abruptly');
   }
@@ -64,7 +65,25 @@ export default async (datalogPath) => {
     data = {
       tuneFileName: await file
         .read(Buffer.alloc(0x80), { position: 0x324 })
-        .then(getNullTerminatedString),
+        .then(getUntilNullTerminatedString),
+
+      units: {
+        rtc: Symbol.keyFor(units.MS),
+        rpm: Symbol.keyFor(units.RPM),
+        injPW: Symbol.keyFor(units.MS),
+        dutyCycle: Symbol.keyFor(units.PERCENT),
+        targetAFR: Symbol.keyFor(units.TO1),
+        afr: Symbol.keyFor(units.TO1),
+        fuelFlow: Symbol.keyFor(units.GLBPH),
+        estimatedVE: Symbol.keyFor(units.PERCENT),
+        ignitionTiming: Symbol.keyFor(units.DEG),
+        map: Symbol.keyFor(units.PSIA),
+        mat: Symbol.keyFor(units.F),
+        cts: Symbol.keyFor(units.F),
+        battery: Symbol.keyFor(units.V),
+        oilPressure: Symbol.keyFor(units.PSIG),
+        tps: Symbol.keyFor(units.PERCENT),
+      },
 
       points: await Promise.all(
         new Array(pointCount)
