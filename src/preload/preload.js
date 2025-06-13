@@ -9,8 +9,9 @@ contextBridge.exposeInMainWorld('hudley', {
     .then((datalog) => ({
       ...datalog,
       units: Object.entries(datalog.units).reduce((result, [name, unit]) => ({
+        ...result,
         [name]: Symbol.for(unit),
-      }))
+      }), {})
     })),
 
   initRender: (renderPath, options) => ipcRenderer.invoke('init-render', renderPath, options),

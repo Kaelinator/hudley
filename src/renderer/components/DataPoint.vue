@@ -8,13 +8,13 @@
         <button v-if="props.editable" @click="editing = !editing" :class="$style.button">
           <BsPencilFill />
         </button>
-        <button @click="console.log" :class="$style.button">
+        <button @click="addToView" :class="$style.button">
           <MdAdd />
         </button>
       </div>
     </div>
     <div :class="[ $style.contentWrapper, !editing && $style.displayNone ]">
-      <TextBox @change="setDisplayName" label="Name:" :startValue="name" />
+      <TextBox @change="setName" label="Name:" :startValue="name" />
       <Select @change="setUnit" label="Unit of measure:" :startValue="Symbol.keyFor(unit)">
         <option v-for="u in Object.values(units)" :value="Symbol.keyFor(u)">{{ Symbol.keyFor(u) }}</option>
       </Select>
@@ -24,10 +24,10 @@
       </Select>
       <TextBox v-if="populationStrategy == 'formulaic'" @change="setFormula" label="Formula:" :startValue="formula" />
       <div :class="$style.editControlWrapper">
-        <button @click="console.log" :class="$style.button">
+        <button @click="remove" :class="$style.button">
           <AiFillDelete />
         </button>
-        <button @click="console.log" :class="$style.button">
+        <button @click="update" :class="$style.button">
           <AiOutlineCheck />
         </button>
       </div>
@@ -52,28 +52,51 @@
     editable: { type: Boolean, default: false },
   });
 
-  const emit = defineEmits(['addToView']);
+  const emit = defineEmits(['addToView', 'update', 'remove']);
 
   const editing = ref(false);
-  const name = ref(props.name);
-  const unit = ref(props.unit);
-  const populationStrategy = ref('manual');
-  const formula = ref('');
 
-  const setDisplayName = (newName) => {
+  const name = ref(props.name);
+  const setName = (newName) => {
     name.value = newName;
   };
 
-  const setUnit = (unit) => {
-    console.log(unit);
+  const unit = ref(props.unit);
+  const setUnit = (u) => {
+    unit.value = Symbol.for(u);
   };
 
+  const populationStrategy = ref('manual');
   const setPopulationStrategy = (strat) => {
     populationStrategy.value = strat;
   };
 
+  const formula = ref('');
   const setFormula = (f) => {
     formula.value = f;
+  };
+
+  const remove = () => {
+    editing.value = false;
+    emit('remove');
+  };
+
+  const update = () => {
+    editing.value = false;
+    emit('update', {
+      name: name.value,
+      unit: unit.value,
+      populationStrategy: populationStrategy.value,
+      ...(
+        populationStrategy.value !== 'formulaic'
+          ? {}
+          : { formula: formula.value }
+      )
+    });
+  };
+
+  const addToView = () => {
+    emit('addToView');
   };
 </script>
 

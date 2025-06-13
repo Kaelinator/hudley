@@ -30,7 +30,14 @@
       </CollapsibleSection>
       <CollapsibleSection title="Data Points" v-if="datalog">
         <div :class="$style.dataPointList">
-          <DataPoint v-for="datapoint in Object.keys(datalog.units)" :name="datapoint" editable />
+          <DataPoint v-for="(datapoint, index) in Object.entries(datalog.units)"
+            :name="datapoint[0]"
+            :unit="datapoint[1]"
+            @remove="() => removeDataPoint(index)"
+            @update="(newDataPoint) => updateDataPoint(index, newDataPoint)"
+            @addToView="() => addDataPointToView(index)"
+            editable
+          />
         </div>
       </CollapsibleSection>
     </div>
@@ -168,6 +175,29 @@
     renderInProgress.value = true;
   };
 
+  const removeDataPoint = (index) => {
+    const units = Object.entries(datalog.value.units);
+    datalog.value = {
+      ...datalog.value,
+      units: {
+        ...([
+          ...units.slice(0, index),
+          ...units.slice(index + 1),
+        ]).reduce((result, [k, v]) => ({
+          ...result,
+          [k]: v,
+        }), {}),
+      },
+    };
+  };
+
+  const updateDataPoint = (index, newDataPoint) => {
+    console.log('update', index, newDataPoint);
+  }
+  
+  const addDataPointToView = (index) => {
+    console.log('addDataPointToView', index);
+  };
 </script>
 
 <style module>
