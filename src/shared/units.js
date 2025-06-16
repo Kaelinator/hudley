@@ -19,6 +19,16 @@ export const units = {
   S: Symbol.for('seconds'),
   H: Symbol.for('hour'),
 
+  /* distance */
+  FT: Symbol.for('feet'),
+  IN: Symbol.for('inch'),
+  M: Symbol.for('meter'),
+  MM: Symbol.for('millimeter'),
+
+  /* speed */
+  MPH: Symbol.for('miles per hour'),
+  KPH: Symbol.for('kilometers per hour'),
+
   /* part */
   TO1: Symbol.for('ratio to 1'),
   PERCENT: Symbol.for('percent'),

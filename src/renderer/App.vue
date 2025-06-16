@@ -30,6 +30,12 @@
       </CollapsibleSection>
       <CollapsibleSection title="Data Points" v-if="datalog">
         <div :class="$style.dataPointList">
+          <Button :class="$style.createDataPointButton"
+            v-if="datalog"
+            @click="newDataPoint"
+            :disabled="renderInProgress">
+            Create data point
+          </Button>
           <DataPoint v-for="(datapoint, index) in Object.entries(datalog.units)"
             :key="datapoint[0]"
             :name="datapoint[0]"
@@ -37,7 +43,7 @@
             @remove="() => removeDataPoint(index)"
             @update="(newDataPoint) => updateDataPoint(index, newDataPoint)"
             @addToView="() => addDataPointToView(index)"
-            editable
+            :editable="!datalog.readonly[datapoint[0]]"
           />
         </div>
       </CollapsibleSection>
@@ -82,6 +88,7 @@
   import ProgressBar from './components/ProgressBar.vue';
   import DataPoint from './components/DataPoint.vue';
 
+  import { units } from '../shared/units';
   import * as canvasUtil from './utils/canvas';
   import * as objectUtil from './utils/object';
 
@@ -116,7 +123,7 @@
       readonly: Object.keys(log.units).reduce((result, key) => ({
         ...result,
         [key]: true,
-      })),
+      }), {}),
       populationStrategies: {},
       formulae: {},
     };
@@ -186,6 +193,29 @@
     renderInProgress.value = true;
   };
 
+  const newDataPoint = () => {
+    const name = 'newDatapoint';
+    datalog.value = {
+      ...datalog.value,
+      units: {
+        [name]: units.DIMENSIONLESS,
+        ...datalog.value.units,
+      },
+      readonly: {
+        [name]: false,
+        ...datalog.value.readonly,
+      },
+      populationStrategies: {
+        [name]: 'manual',
+        ...datalog.value.populationStrategies,
+      },
+      formulae: {
+        [name]: '',
+        ...datalog.value.formulae,
+      },
+    };
+  };
+
   const removeDataPoint = (index) => {
     datalog.value = {
       ...datalog.value,
@@ -205,7 +235,6 @@
   }
   
   const addDataPointToView = (index) => {
-    // const index = units.findIndex(([key]) => key === name);
     console.log('addDataPointToView', index);
   };
 </script>
@@ -269,6 +298,11 @@
     display: flex;
     flex-flow: column nowrap;
     gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .createDataPointButton {
+    margin: 0 10px;
   }
 </style>
 
