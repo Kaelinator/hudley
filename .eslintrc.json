@@ -5,11 +5,15 @@
       "error",
       {"devDependencies": true}
     ],
-    "no-loss-of-precision": "off"
+    "import/prefer-default-export": "off",
+    "no-loss-of-precision": "off",
+    "no-mixed-operators": "off",
+    "no-console": "off"
   },
   "globals": {
     "MAIN_WINDOW_VITE_DEV_SERVER_URL": true,
     "MAIN_WINDOW_VITE_NAME": true,
-    "window": true
+    "window": true,
+    "ImageData": true
   }
 }

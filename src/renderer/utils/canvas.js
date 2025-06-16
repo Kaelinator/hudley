@@ -31,24 +31,23 @@ export const renderFrame = (context) => {
 export const render = (context, {
   startPoint, endPoint, framerate, renderPath,
 }) => {
-
   let cancelled = false;
   let progressHandler;
   let doneHandler;
 
   const api = {};
 
-  api['onProgress'] = (f) => {
+  api.onProgress = (f) => {
     progressHandler = f;
     return api;
   };
 
-  api['onDone'] = (f) => {
+  api.onDone = (f) => {
     doneHandler = f;
     return api;
   };
 
-  api['cancel'] = () => {
+  api.cancel = () => {
     cancelled = true;
   };
 
@@ -57,30 +56,30 @@ export const render = (context, {
     frameRate: framerate,
     transparent: true,
   }).then(async () => {
-      const startTime = Date.now();
-      /* eslint-disable no-await-in-loop */
-      for (let i = startPoint; i < endPoint; i += 1) {
-        const { frame, alpha } = renderFrame(context);
-        await window.hudley.addFrame(frame, alpha);
-        if (i != startPoint) {
-          progressHandler({
-            frame: i - startPoint,
-            totalFrames: endPoint - startPoint,
-            progress: (i - startPoint) / (endPoint - startPoint),
-            elapsedTime: Date.now() - startTime,
-            estimatedRunTime: (endPoint - startPoint) / (i - startPoint) * (Date.now() - startTime),
-          });
-        }
-        if (cancelled) {
-          break;
-        }
+    const startTime = Date.now();
+    /* eslint-disable no-await-in-loop */
+    for (let i = startPoint; i < endPoint; i += 1) {
+      const { frame, alpha } = renderFrame(context);
+      await window.hudley.addFrame(frame, alpha);
+      if (i !== startPoint) {
+        progressHandler({
+          frame: i - startPoint,
+          totalFrames: endPoint - startPoint,
+          progress: (i - startPoint) / (endPoint - startPoint),
+          elapsedTime: Date.now() - startTime,
+          estimatedRunTime: (endPoint - startPoint) / (i - startPoint) * (Date.now() - startTime),
+        });
       }
-      /* eslint-enable no-await-in-loop */
+      if (cancelled) {
+        break;
+      }
+    }
+    /* eslint-enable no-await-in-loop */
 
-      await window.hudley.completeRender();
-      doneHandler();
-      console.log('done');
-    });
+    await window.hudley.completeRender();
+    doneHandler();
+    console.log('done');
+  });
 
   return api;
 };

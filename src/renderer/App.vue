@@ -28,10 +28,24 @@
           </ProgressBar>
         </div>
       </CollapsibleSection>
-      <CollapsibleSection title="Data Points">
-        <li v-for="index in 50" :key="index">
-          {{ index }}
-        </li>
+      <CollapsibleSection title="Data Points" v-if="datalog">
+        <div :class="$style.dataPointList">
+          <Button :class="$style.createDataPointButton"
+            v-if="datalog"
+            @click="newDataPoint"
+            :disabled="renderInProgress">
+            Create data point
+          </Button>
+          <DataPoint v-for="(datapoint, index) in Object.entries(datalog.units)"
+            :key="datapoint[0]"
+            :name="datapoint[0]"
+            :unit="datapoint[1]"
+            @remove="() => removeDataPoint(index)"
+            @update="(newDataPoint) => updateDataPoint(index, newDataPoint)"
+            @addToView="() => addDataPointToView(index)"
+            :editable="!datalog.readonly[datapoint[0]]"
+          />
+        </div>
       </CollapsibleSection>
     </div>
 
@@ -72,7 +86,11 @@
   import Select from './components/Select.vue';
   import Button from './components/Button.vue';
   import ProgressBar from './components/ProgressBar.vue';
+  import DataPoint from './components/DataPoint.vue';
+
+  import { units } from '../shared/units';
   import * as canvasUtil from './utils/canvas';
+  import * as objectUtil from './utils/object';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -99,7 +117,17 @@
   const datalog = ref();
   const setDatalogPath = async (path) => {
     datalogPath.value = path;
-    datalog.value = await window.hudley.readDatalog(path);
+    const log = await window.hudley.readDatalog(path);
+    datalog.value = {
+      ...log,
+      readonly: Object.keys(log.units).reduce((result, key) => ({
+        ...result,
+        [key]: true,
+      }), {}),
+      populationStrategies: {},
+      formulae: {},
+    };
+    console.log(datalog.value);
   };
   
   const startPoint = ref(0);
@@ -165,6 +193,50 @@
     renderInProgress.value = true;
   };
 
+  const newDataPoint = () => {
+    const name = 'newDatapoint';
+    datalog.value = {
+      ...datalog.value,
+      units: {
+        [name]: units.DIMENSIONLESS,
+        ...datalog.value.units,
+      },
+      readonly: {
+        [name]: false,
+        ...datalog.value.readonly,
+      },
+      populationStrategies: {
+        [name]: 'manual',
+        ...datalog.value.populationStrategies,
+      },
+      formulae: {
+        [name]: '',
+        ...datalog.value.formulae,
+      },
+    };
+  };
+
+  const removeDataPoint = (index) => {
+    datalog.value = {
+      ...datalog.value,
+      units: objectUtil.deleteAtIndex(datalog.value.units, index),
+      populationStrategies: objectUtil.deleteAtIndex(datalog.value.populationStrategies, index),
+      formulae: objectUtil.deleteAtIndex(datalog.value.formulae, index),
+    };
+  };
+
+  const updateDataPoint = (index, newDataPoint) => {
+    datalog.value = {
+      ...datalog.value,
+      units: objectUtil.replaceAtIndex(datalog.value.units, index, newDataPoint.unit, newDataPoint.name),
+      populationStrategies: objectUtil.replaceAtIndex(datalog.value.populationStrategies, index, newDataPoint.populationStrategy, newDataPoint.name),
+      formulae: objectUtil.replaceAtIndex(datalog.value.formulae, index, newDataPoint.formula, newDataPoint.name),
+    };
+  }
+  
+  const addDataPointToView = (index) => {
+    console.log('addDataPointToView', index);
+  };
 </script>
 
 <style module>
@@ -220,6 +292,17 @@
 
   .virtualCanvas {
     display: none;
+  }
+
+  .dataPointList {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .createDataPointButton {
+    margin: 0 10px;
   }
 </style>
 
