@@ -5,7 +5,7 @@
         {{ props.name }}
       </div>
       <div :class="$style.buttonWrapper">
-        <button v-if="props.editable" @click="editing = !editing" :class="$style.button">
+        <button v-if="props.editable" @click="toggleEditing" :class="$style.button">
           <BsPencilFill />
         </button>
         <button @click="addToView" :class="$style.button">
@@ -50,11 +50,11 @@
     name: String, 
     unit: { type: Symbol, default: units.DIMENSIONLESS },
     editable: { type: Boolean, default: false },
+    populationStrategy: { type: String, default: 'manual' },
+    formula: String,
   });
 
   const emit = defineEmits(['addToView', 'update', 'remove']);
-
-  const editing = ref(false);
 
   const name = ref(props.name);
   const setName = (newName) => {
@@ -66,14 +66,26 @@
     unit.value = Symbol.for(u);
   };
 
-  const populationStrategy = ref('manual');
+  const populationStrategy = ref(props.populationStrategy);
   const setPopulationStrategy = (strat) => {
     populationStrategy.value = strat;
   };
 
-  const formula = ref('');
+  const formula = ref(props.formula);
   const setFormula = (f) => {
     formula.value = f;
+  };
+
+  const editing = ref(false);
+  const toggleEditing = () => {
+    editing.value = !editing.value;
+    if (!editing.value) {
+      // revert changes
+      name.value = props.name;
+      unit.value = props.unit;
+      populationStrategy.value = props.populationStrategy;
+      formula.value = props.formula;
+    }
   };
 
   const remove = () => {

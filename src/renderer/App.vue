@@ -31,6 +31,7 @@
       <CollapsibleSection title="Data Points" v-if="datalog">
         <div :class="$style.dataPointList">
           <DataPoint v-for="(datapoint, index) in Object.entries(datalog.units)"
+            :key="datapoint[0]"
             :name="datapoint[0]"
             :unit="datapoint[1]"
             @remove="() => removeDataPoint(index)"
@@ -82,6 +83,7 @@
   import DataPoint from './components/DataPoint.vue';
 
   import * as canvasUtil from './utils/canvas';
+  import * as objectUtil from './utils/object';
 
   const tab = ref('tab0');
   provide('main-content-tab-id', tab);
@@ -108,7 +110,16 @@
   const datalog = ref();
   const setDatalogPath = async (path) => {
     datalogPath.value = path;
-    datalog.value = await window.hudley.readDatalog(path);
+    const log = await window.hudley.readDatalog(path);
+    datalog.value = {
+      ...log,
+      readonly: Object.keys(log.units).reduce((result, key) => ({
+        ...result,
+        [key]: true,
+      })),
+      populationStrategies: {},
+      formulae: {},
+    };
     console.log(datalog.value);
   };
   
@@ -176,26 +187,25 @@
   };
 
   const removeDataPoint = (index) => {
-    const units = Object.entries(datalog.value.units);
     datalog.value = {
       ...datalog.value,
-      units: {
-        ...([
-          ...units.slice(0, index),
-          ...units.slice(index + 1),
-        ]).reduce((result, [k, v]) => ({
-          ...result,
-          [k]: v,
-        }), {}),
-      },
+      units: objectUtil.deleteAtIndex(datalog.value.units, index),
+      populationStrategies: objectUtil.deleteAtIndex(datalog.value.populationStrategies, index),
+      formulae: objectUtil.deleteAtIndex(datalog.value.formulae, index),
     };
   };
 
   const updateDataPoint = (index, newDataPoint) => {
-    console.log('update', index, newDataPoint);
+    datalog.value = {
+      ...datalog.value,
+      units: objectUtil.replaceAtIndex(datalog.value.units, index, newDataPoint.unit, newDataPoint.name),
+      populationStrategies: objectUtil.replaceAtIndex(datalog.value.populationStrategies, index, newDataPoint.populationStrategy, newDataPoint.name),
+      formulae: objectUtil.replaceAtIndex(datalog.value.formulae, index, newDataPoint.formula, newDataPoint.name),
+    };
   }
   
   const addDataPointToView = (index) => {
+    // const index = units.findIndex(([key]) => key === name);
     console.log('addDataPointToView', index);
   };
 </script>
