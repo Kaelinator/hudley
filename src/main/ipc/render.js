@@ -21,7 +21,7 @@ const addFrame = (_event, frame, alpha) => {
   return Promise.resolve(writer.addFrame(frame, alpha));
 };
 
-const completeRender = (_event) => {
+const completeRender = () => {
   if (!writer) throw new Error('Writer not initialized. Be sure to call initRender before completeRender.');
 
   return writer.complete().then(() => outputFileHandle.close());
