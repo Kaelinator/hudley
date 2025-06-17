@@ -40,9 +40,9 @@
             :key="datapoint[0]"
             :name="datapoint[0]"
             :unit="datapoint[1]"
-            @remove="() => removeDataPoint(index)"
+            @remove="removeDataPoint(index)"
             @update="(newDataPoint) => updateDataPoint(index, newDataPoint)"
-            @addToView="() => addDataPointToView(index)"
+            @addToView="addDataPointToView(index)"
             :editable="!datalog.readonly[datapoint[0]]"
           />
         </div>
@@ -65,8 +65,13 @@
     <div :class="$style.bar">
       <CollapsibleSection title="Components" v-if="datalog">
         <div :class="$style.dataPointList">
-          <Component dataPoint="rpm" @update="console.log" @remove="console.log('remove')" editable />
-          <Component dataPoint="cts" @update="console.log" @remove="console.log('remove')" editable />
+          <Component v-for="(component, index) in components"
+            :key="component.key"
+            :dataPoint="component.dataPoint"
+            @update="(newComponent) => updateComponent(index, newComponent)"
+            @remove="removeComponent(index)"
+            editable
+          />
         </div>
       </CollapsibleSection>
     </div>
@@ -78,6 +83,7 @@
   import { ref, provide, readonly, useTemplateRef, watchEffect } from 'vue';
   import { ImTable } from 'vue-icons-plus/im';
   import { BsEasel } from 'vue-icons-plus/bs';
+  import { v4 as uuidv4 } from 'uuid';
 
   import CollapsibleSection from './components/CollapsibleSection.vue';
   import Tabulator from './components/Tabulator.vue';
@@ -237,8 +243,30 @@
     };
   }
   
+  const components = ref([]);
   const addDataPointToView = (index) => {
-    console.log('addDataPointToView', index);
+    components.value = [
+      ...components.value,
+      {
+        key: uuidv4(),
+        dataPoint: Object.keys(datalog.value.units)[index],
+      },
+    ]
+  };
+
+  const updateComponent = (index, newComponent) => {
+    components.value = [
+      ...components.value.slice(0, index),
+      newComponent,
+      ...components.value.slice(index + 1),
+    ];
+  };
+
+  const removeComponent = (index) => {
+    components.value = [
+      ...components.value.slice(0, index),
+      ...components.value.slice(index + 1),
+    ];
   };
 </script>
 
