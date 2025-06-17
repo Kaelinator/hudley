@@ -63,10 +63,11 @@
     </div>
 
     <div :class="$style.bar">
-      <CollapsibleSection title="Component List">
-        <li v-for="index in 10" :key="index">
-          {{ index }}
-        </li>
+      <CollapsibleSection title="Components" v-if="datalog">
+        <div :class="$style.dataPointList">
+          <Component dataPoint="rpm" @update="console.log" @remove="console.log('remove')" editable />
+          <Component dataPoint="cts" @update="console.log" @remove="console.log('remove')" editable />
+        </div>
       </CollapsibleSection>
     </div>
   </div>
@@ -74,7 +75,7 @@
 </template>
 
 <script setup>
-  import { ref, provide, useTemplateRef, watchEffect } from 'vue';
+  import { ref, provide, readonly, useTemplateRef, watchEffect } from 'vue';
   import { ImTable } from 'vue-icons-plus/im';
   import { BsEasel } from 'vue-icons-plus/bs';
 
@@ -87,6 +88,7 @@
   import Button from './components/Button.vue';
   import ProgressBar from './components/ProgressBar.vue';
   import DataPoint from './components/DataPoint.vue';
+  import Component from './components/Component.vue';
 
   import { units } from '../shared/units';
   import * as canvasUtil from './utils/canvas';
@@ -115,6 +117,7 @@
 
   const datalogPath = ref();
   const datalog = ref();
+  provide('datalog', readonly(datalog));
   const setDatalogPath = async (path) => {
     datalogPath.value = path;
     const log = await window.hudley.readDatalog(path);
