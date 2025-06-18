@@ -27,6 +27,7 @@
   const emit = defineEmits(['change']);
 
   watch(() => props.startValue, (startValue) => {
+    if (value.value === startValue) return;
     value.value = startValue;
     emit('change', startValue);
   });

@@ -25,6 +25,7 @@
   const emit = defineEmits(['change']);
 
   watch(() => props.startValue, (startValue) => {
+    if (checked.value === startValue) return;
     checked.value = startValue;
     emit('change', startValue);
   });
