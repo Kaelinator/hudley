@@ -16,8 +16,7 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
 
   components.forEach((component) => {
 
-    console.log(component);
-    context.font = `${component.size}px ${component.font}`;
+    context.font = `${component.size}px '${component.font}', sans-serif`;
     context.fillStyle = component.fill;
     context.textAlign = component.justify;
     context.textBaseline = component.align;

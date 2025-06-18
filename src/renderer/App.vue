@@ -241,15 +241,35 @@
       formulae: objectUtil.replaceAtIndex(datalog.value.formulae, index, newDataPoint.formula, newDataPoint.name),
     };
   }
-  
+
+  const fonts = ref([]);
+  provide('fonts', fonts);
+  queryLocalFonts().then((f) => {
+    fonts.value = f;
+  });
+
   const components = ref([]);
   provide('components', readonly(components));
   const addDataPointToView = (index) => {
+    const dataPoint = Object.keys(datalog.value.units)[index];
     components.value = [
       ...components.value,
       {
         key: uuidv4(),
-        dataPoint: Object.keys(datalog.value.units)[index],
+        dataPoint,
+        x: canvasWidth.value / 2,
+        y: canvasHeight.value / 2,
+        decimalPlaces: 0,
+        unitOfMeasure: datalog.value.units[dataPoint],
+        showUnitOfMeasure: false,
+        label: '',
+        font: fonts.value[0].postscriptName,
+        size: 48,
+        justify: 'center',
+        align: 'middle',
+        fill: '#000000',
+        stroke: '#000000',
+        strokeWeight: 0,
       },
     ]
   };
@@ -268,12 +288,6 @@
       ...components.value.slice(index + 1),
     ];
   };
-
-  const fonts = ref([]);
-  provide('fonts', fonts);
-  queryLocalFonts().then((f) => {
-    fonts.value = f;
-  });
 </script>
 
 <style module>

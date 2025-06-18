@@ -2,7 +2,7 @@
   <div :class="$style.wrapper">
     <div :class="$style.barWrapper">
       <div>
-        {{ props.dataPoint }}
+        {{ dataPoint }}
       </div>
       <div :class="$style.buttonWrapper">
         <button v-if="props.editable" @click="toggleEditing" :class="$style.button">
@@ -11,40 +11,37 @@
       </div>
     </div>
     <div :class="[ $style.contentWrapper, !editing && $style.displayNone ]">
-      <Select @change="p => component.dataPoint = p" label="Data point:" :startValue="component.dataPoint">
+      <Select @change="dataPoint => update({ dataPoint })" label="Data point:" :startValue="props.dataPoint">
         <option v-for="point in Object.keys(datalog.units)" :value="point">{{ point }}</option>
       </Select>
-      <NumericUpDown @change="x => component.x = x" :startValue="component.x" label="X:" />
-      <NumericUpDown @change="y => component.y = y" :startValue="component.y" label="Y:" />
-      <NumericUpDown @change="n => component.decimalPlaces = n" :min="0" :startValue="component.decimalPlaces" label="Decimal places:" />
-      <Select @change="u => component.unitOfMeasure = Symbol.for(u)" label="Unit of measure:" :startValue="Symbol.keyFor(component.unitOfMeasure)">
+      <NumericUpDown @change="x => update({ x })" :startValue="props.x" label="X:" />
+      <NumericUpDown @change="y => update({ y })" :startValue="props.y" label="Y:" />
+      <NumericUpDown @change="decimalPlaces => update({ decimalPlaces })" :min="0" :startValue="props.decimalPlaces" label="Decimal places:" />
+      <Select @change="u => update({ unitOfMeasure: Symbol.for(u) })" label="Unit of measure:" :startValue="Symbol.keyFor(props.unitOfMeasure)">
         <option v-for="u in Object.values(units)" :value="Symbol.keyFor(u)">{{ Symbol.keyFor(u) }}</option>
       </Select>
-      <CheckBox @change="b => component.showUnitOfMeasure = b" :startValue="component.showUnitOfMeasure" label="Show unit of measure:" />
-      <TextBox @change="t => component.label = t" label="Label:" :startValue="component.label" />
-      <Select @change="f => component.font = f" label="Font:" :startValue="component.font">
+      <CheckBox @change="showUnitOfMeasure => update({ showUnitOfMeasure })" :startValue="props.showUnitOfMeasure" label="Show unit of measure:" />
+      <TextBox @change="label => update({ label })" label="Label:" :startValue="props.label" />
+      <Select @change="font => update({ font })" label="Font:" :startValue="props.font">
         <option v-for="font in fonts" :value="font.postscriptName">{{ font.fullName }}</option>
       </Select>
-      <NumericUpDown @change="n => component.size = n" :min="0" :startValue="component.size" label="Size:" />
-      <Select @change="j => component.justify = j" label="Justify:" :startValue="component.justify">
+      <NumericUpDown @change="size => update({ size })" :min="0" :startValue="props.size" label="Size:" />
+      <Select @change="justify => update({ justify })" label="Justify:" :startValue="props.justify">
         <option value="left">Left</option>
         <option value="center">Center</option>
         <option value="right">Right</option>
       </Select>
-      <Select @change="a => component.align = a" label="Align:" :startValue="component.align">
+      <Select @change="align => update({ align })" label="Align:" :startValue="props.align">
         <option value="top">Top</option>
         <option value="middle">Middle</option>
         <option value="bottom">Bottom</option>
       </Select>
-      <ColorPicker @change="c => component.fill = c" :startValue="component.fill" label="Fill:" />
-      <ColorPicker @change="c => component.stroke = c" :startValue="component.stroke" label="Stroke:" />
-      <NumericUpDown @change="n => component.strokeWeight = n" :min="0" :startValue="component.strokeWeight" label="Stroke weight:" />
+      <ColorPicker @change="fill => update({ fill })" :startValue="props.fill" label="Fill:" />
+      <ColorPicker @change="stroke => update({ stroke })" :startValue="props.stroke" label="Stroke:" />
+      <NumericUpDown @change="strokeWeight => update({ strokeWeight })" :min="0" :startValue="props.strokeWeight" label="Stroke weight:" />
       <div :class="$style.editControlWrapper">
         <button @click="remove" :class="$style.button">
           <AiFillDelete />
-        </button>
-        <button @click="update" :class="$style.button">
-          <AiOutlineCheck />
         </button>
       </div>
     </div>
@@ -52,9 +49,9 @@
 </template>
 
 <script setup>
-  import { defineEmits, defineProps, inject, ref } from 'vue';
+  import { defineEmits, defineProps, inject, ref  } from 'vue';
   import { BsPencilFill } from 'vue-icons-plus/bs';
-  import { AiFillDelete, AiOutlineCheck } from 'vue-icons-plus/ai';
+  import { AiFillDelete } from 'vue-icons-plus/ai';
 
   import Select from './Select.vue';
   import NumericUpDown from './NumericUpDown.vue';
@@ -71,7 +68,7 @@
     y: { type: Number, default: 0 },
     decimalPlaces: { type: Number, default: 1 },
     unitOfMeasure: { type: Symbol, default: units.DIMENSIONLESS },
-    showUnitOfMeasure: { type: Boolean, default: true },
+    showUnitOfMeasure: { type: Boolean, default: false },
     label: { type: String, default: '' }, 
     font: { type: String, default: 'sans-serif' },
     size: { type: Number, default: 24 },
@@ -90,11 +87,6 @@
   const editing = ref(false);
   const toggleEditing = () => {
     editing.value = !editing.value;
-    if (!editing.value) {
-      // revert changes
-      const { editable, ...componentProps } = props;
-      component.value = componentProps;
-    }
   };
 
   const component = ref({
@@ -119,10 +111,15 @@
     emit('remove');
   };
 
-  const update = () => {
-    editing.value = false;
+  const update = (content) => {
+    component.value = {
+      ...component.value,
+      ...content
+    };
+    console.log('update', content);
     emit('update', component.value);
   };
+
 </script>
 
 <style module>
