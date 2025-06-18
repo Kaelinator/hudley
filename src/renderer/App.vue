@@ -40,9 +40,9 @@
             :key="datapoint[0]"
             :name="datapoint[0]"
             :unit="datapoint[1]"
-            @remove="() => removeDataPoint(index)"
+            @remove="removeDataPoint(index)"
             @update="(newDataPoint) => updateDataPoint(index, newDataPoint)"
-            @addToView="() => addDataPointToView(index)"
+            @addToView="addDataPointToView(index)"
             :editable="!datalog.readonly[datapoint[0]]"
           />
         </div>
@@ -63,10 +63,15 @@
     </div>
 
     <div :class="$style.bar">
-      <CollapsibleSection title="Component List">
-        <li v-for="index in 10" :key="index">
-          {{ index }}
-        </li>
+      <CollapsibleSection title="Components" v-if="datalog">
+        <div :class="$style.dataPointList">
+          <Component v-for="(component, index) in components"
+            v-bind="component"
+            @update="(newComponent) => updateComponent(index, newComponent)"
+            @remove="removeComponent(index)"
+            editable
+          />
+        </div>
       </CollapsibleSection>
     </div>
   </div>
@@ -74,9 +79,10 @@
 </template>
 
 <script setup>
-  import { ref, provide, useTemplateRef, watchEffect } from 'vue';
+  import { ref, provide, readonly, useTemplateRef, watchEffect } from 'vue';
   import { ImTable } from 'vue-icons-plus/im';
   import { BsEasel } from 'vue-icons-plus/bs';
+  import { v4 as uuidv4 } from 'uuid';
 
   import CollapsibleSection from './components/CollapsibleSection.vue';
   import Tabulator from './components/Tabulator.vue';
@@ -87,6 +93,7 @@
   import Button from './components/Button.vue';
   import ProgressBar from './components/ProgressBar.vue';
   import DataPoint from './components/DataPoint.vue';
+  import Component from './components/Component.vue';
 
   import { units } from '../shared/units';
   import * as canvasUtil from './utils/canvas';
@@ -115,6 +122,7 @@
 
   const datalogPath = ref();
   const datalog = ref();
+  provide('datalog', readonly(datalog));
   const setDatalogPath = async (path) => {
     datalogPath.value = path;
     const log = await window.hudley.readDatalog(path);
@@ -234,9 +242,38 @@
     };
   }
   
+  const components = ref([]);
+  provide('components', readonly(components));
   const addDataPointToView = (index) => {
-    console.log('addDataPointToView', index);
+    components.value = [
+      ...components.value,
+      {
+        key: uuidv4(),
+        dataPoint: Object.keys(datalog.value.units)[index],
+      },
+    ]
   };
+
+  const updateComponent = (index, newComponent) => {
+    components.value = [
+      ...components.value.slice(0, index),
+      newComponent,
+      ...components.value.slice(index + 1),
+    ];
+  };
+
+  const removeComponent = (index) => {
+    components.value = [
+      ...components.value.slice(0, index),
+      ...components.value.slice(index + 1),
+    ];
+  };
+
+  const fonts = ref([]);
+  provide('fonts', fonts);
+  queryLocalFonts().then((f) => {
+    fonts.value = f;
+  });
 </script>
 
 <style module>

@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-  import { defineProps, ref, useTemplateRef, watchEffect } from 'vue';
+  import { defineProps, inject, ref, useTemplateRef, watchEffect } from 'vue';
 
   import { renderFrame } from '../utils/canvas';
 
@@ -16,13 +16,24 @@
   });
 
   const frame = ref("");
+  const datalog = inject('datalog');
+  const components = inject('components');
 
   const canvas = useTemplateRef('renderer');
   watchEffect(() => {
     if (canvas.value) {
       // canvas is mounted
+      if (!datalog.value) return;
       const context = canvas.value.getContext('2d');
-      frame.value = renderFrame(context).frame;
+      const dataPoints = Object.keys(datalog.value.units)
+        .reduce((result, key) => ({
+          ...result,
+          [key]: {
+            value: datalog.value.points[0][key],
+            unit: datalog.value.units[key],
+          },
+        }), {});
+      frame.value = renderFrame(context, components.value, dataPoints).frame;
     }
   });
 </script>

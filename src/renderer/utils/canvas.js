@@ -9,16 +9,25 @@ const convertAlphaToGrayscaleImage = (context) => {
   return context.canvas.toDataURL('image/webp');
 };
 
-export const renderFrame = (context) => {
+export const renderFrame = (context, components, dataPoints) => {
   const { canvas } = context;
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.font = 'bold 144px sans-serif';
-  context.fillStyle = 'white';
-  context.shadowColor = 'rgb(0 0 0 / 50%)';
-  context.shadowBlur = 8;
-  context.textAlign = 'center';
-  context.fillText('yuh yuh yuh', canvas.width / 2, canvas.height / 2);
+
+  components.forEach((component) => {
+
+    console.log(component);
+    context.font = `${component.size}px ${component.font}`;
+    context.fillStyle = component.fill;
+    context.textAlign = component.justify;
+    context.textBaseline = component.align;
+    context.strokeStyle = component.stroke;
+    context.lineWidth = component.strokeWeight;
+
+    const text = `${component.label}${dataPoints[component.dataPoint].value.toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? Symbol.keyFor(component.unitOfMeasure) : ''}`;
+
+    context.fillText(text, component.x, component.y);
+  });
 
   const frame = context.canvas.toDataURL('image/webp');
 
