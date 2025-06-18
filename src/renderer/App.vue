@@ -243,6 +243,7 @@
   }
   
   const components = ref([]);
+  provide('components', readonly(components));
   const addDataPointToView = (index) => {
     components.value = [
       ...components.value,

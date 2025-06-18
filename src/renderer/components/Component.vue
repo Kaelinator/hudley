@@ -33,7 +33,7 @@
       </Select>
       <Select @change="a => component.align = a" label="Align:" :startValue="component.align">
         <option value="top">Top</option>
-        <option value="center">Center</option>
+        <option value="middle">Middle</option>
         <option value="bottom">Bottom</option>
       </Select>
       <ColorPicker @change="c => component.fill = c" :startValue="component.fill" label="Fill:" />
@@ -72,13 +72,13 @@
     decimalPlaces: { type: Number, default: 1 },
     unitOfMeasure: { type: Symbol, default: units.DIMENSIONLESS },
     showUnitOfMeasure: { type: Boolean, default: true },
-    label: String, 
-    font: String, 
+    label: { type: String, default: '' }, 
+    font: { type: String, default: 'sans-serif' },
     size: { type: Number, default: 24 },
     justify: { type: String, default: 'center' },
-    align: { type: String, default: 'center' },
-    fill: String, 
-    stroke: String, 
+    align: { type: String, default: 'middle' },
+    fill: { type: String, default: '#000000' }, 
+    stroke: { type: String, default: '#000000' }, 
     strokeWeight: { type: Number, default: 0 },
   });
 
