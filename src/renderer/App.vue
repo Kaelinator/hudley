@@ -66,8 +66,7 @@
       <CollapsibleSection title="Components" v-if="datalog">
         <div :class="$style.dataPointList">
           <Component v-for="(component, index) in components"
-            :key="component.key"
-            :dataPoint="component.dataPoint"
+            v-bind="component"
             @update="(newComponent) => updateComponent(index, newComponent)"
             @remove="removeComponent(index)"
             editable
@@ -268,6 +267,12 @@
       ...components.value.slice(index + 1),
     ];
   };
+
+  const fonts = ref([]);
+  provide('fonts', fonts);
+  queryLocalFonts().then((f) => {
+    fonts.value = f;
+  });
 </script>
 
 <style module>
