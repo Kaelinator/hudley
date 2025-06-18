@@ -9,7 +9,7 @@ const convertAlphaToGrayscaleImage = (context) => {
   return context.canvas.toDataURL('image/webp');
 };
 
-export const renderFrame = (context, components, dataPoints) => {
+export const renderFrame = (context, components, dataPointValues, dataPointUnits) => {
   const { canvas } = context;
 
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -24,7 +24,7 @@ export const renderFrame = (context, components, dataPoints) => {
     context.strokeStyle = component.stroke;
     context.lineWidth = component.strokeWeight;
 
-    const text = `${component.label}${dataPoints[component.dataPoint].value.toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? Symbol.keyFor(component.unitOfMeasure) : ''}`;
+    const text = `${component.label}${dataPointValues[component.dataPoint].toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? Symbol.keyFor(component.unitOfMeasure) : ''}`;
 
     context.fillText(text, component.x, component.y);
   });
@@ -37,7 +37,7 @@ export const renderFrame = (context, components, dataPoints) => {
   };
 };
 
-export const render = (context, {
+export const render = (context, components, datalog, {
   startPoint, endPoint, framerate, renderPath,
 }) => {
   let cancelled = false;
@@ -68,7 +68,7 @@ export const render = (context, {
     const startTime = Date.now();
     /* eslint-disable no-await-in-loop */
     for (let i = startPoint; i < endPoint; i += 1) {
-      const { frame, alpha } = renderFrame(context);
+      const { frame, alpha } = renderFrame(context, components, datalog.points[i], datalog.units);
       await window.hudley.addFrame(frame, alpha);
       if (i !== startPoint) {
         progressHandler({
@@ -92,3 +92,4 @@ export const render = (context, {
 
   return api;
 };
+

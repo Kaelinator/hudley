@@ -190,7 +190,7 @@
       renderPath: renderPath.value,
     };
 
-    const { cancel } = canvasUtil.render(context, options)
+    const { cancel } = canvasUtil.render(context, components.value, datalog.value, options)
       .onProgress((p) => progress.value = p)
       .onDone(() => {
         renderInProgress.value = false;
