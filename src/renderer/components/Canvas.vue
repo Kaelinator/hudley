@@ -25,15 +25,7 @@
       // canvas is mounted
       if (!datalog.value) return;
       const context = canvas.value.getContext('2d');
-      const dataPoints = Object.keys(datalog.value.units)
-        .reduce((result, key) => ({
-          ...result,
-          [key]: {
-            value: datalog.value.points[0][key],
-            unit: datalog.value.units[key],
-          },
-        }), {});
-      frame.value = renderFrame(context, components.value, dataPoints).frame;
+      frame.value = renderFrame(context, components.value, datalog.value.points[0], datalog.value.units).frame;
     }
   });
 </script>
