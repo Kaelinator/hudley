@@ -259,17 +259,9 @@
         dataPoint,
         x: canvasWidth.value / 2,
         y: canvasHeight.value / 2,
-        decimalPlaces: 0,
         unitOfMeasure: datalog.value.units[dataPoint],
-        showUnitOfMeasure: false,
-        label: '',
         font: fonts.value[0].postscriptName,
         size: 48,
-        justify: 'center',
-        align: 'middle',
-        fill: '#000000',
-        stroke: '#000000',
-        strokeWeight: 0,
       },
     ]
   };
