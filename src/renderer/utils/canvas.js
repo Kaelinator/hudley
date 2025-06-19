@@ -15,7 +15,6 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   components.forEach((component) => {
-
     context.font = `${component.size}px '${component.font}', sans-serif`;
     context.fillStyle = component.fill;
     context.textAlign = component.justify;
@@ -65,10 +64,18 @@ export const render = (context, components, datalog, {
     transparent: true,
   }).then(async () => {
     const startTime = Date.now();
+    let currentRtc = datalog.points[0].rtc;
+    const stepDuration = 1000 / framerate; // ms between frames
+
     /* eslint-disable no-await-in-loop */
     for (let i = startPoint; i < endPoint; i += 1) {
       const { frame, alpha } = renderFrame(context, components, datalog.points[i], datalog.units);
       await window.hudley.addFrame(frame, alpha);
+      currentRtc += stepDuration;
+      while (i !== endPoint - 1 && currentRtc < datalog.points[i + 1].rtc) {
+        await window.hudley.addFrame(frame, alpha);
+        currentRtc += stepDuration;
+      }
       if (i !== startPoint) {
         progressHandler({
           frame: i - startPoint,
@@ -91,4 +98,3 @@ export const render = (context, components, datalog, {
 
   return api;
 };
-
