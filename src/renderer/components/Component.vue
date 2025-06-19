@@ -117,7 +117,6 @@
       ...component.value,
       ...content
     };
-    console.log('update', content);
     emit('update', component.value);
   };
 
