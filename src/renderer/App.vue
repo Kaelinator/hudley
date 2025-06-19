@@ -58,7 +58,9 @@
         <div id="tab0" :class="$style.canvasWrapper">
           <Canvas :width="canvasWidth" :height="canvasHeight" />
         </div>
-        <div id="tab1">Table</div>
+        <div id="tab1" :class="$style.spreadsheetWrapper">
+          <Spreadsheet />
+        </div>
       </Tabulator>
     </div>
 
@@ -94,6 +96,7 @@
   import ProgressBar from './components/ProgressBar.vue';
   import DataPoint from './components/DataPoint.vue';
   import Component from './components/Component.vue';
+  import Spreadsheet from './components/Spreadsheet.vue';
 
   import { units } from '../shared/units';
   import * as canvasUtil from './utils/canvas';
@@ -319,6 +322,10 @@
     flex-flow: column nowrap;
     justify-content: center;
     margin: 10px 10px;
+  }
+
+  .spreadsheetWrapper {
+    overflow: hidden;
   }
 
   .current {

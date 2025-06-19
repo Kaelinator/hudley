@@ -31,7 +31,7 @@
 </script>
 
 <style>
-.display-none {
+.tabulator .display-none {
   display: none;
 }
 </style>
