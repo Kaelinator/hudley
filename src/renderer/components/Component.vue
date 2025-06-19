@@ -105,6 +105,7 @@
     stroke: props.stroke,
     strokeWeight: props.strokeWeight,
   });
+  emit('update', component.value); // sync with props
 
   const remove = () => {
     editing.value = false;
