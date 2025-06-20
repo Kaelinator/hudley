@@ -99,6 +99,7 @@
   import Spreadsheet from './components/Spreadsheet.vue';
 
   import { units } from '../shared/units';
+  import { calculateValue } from '../shared/formula';
   import * as canvasUtil from './utils/canvas';
   import * as objectUtil from './utils/object';
 
@@ -209,21 +210,25 @@
     datalog.value = {
       ...datalog.value,
       units: {
-        [name]: units.DIMENSIONLESS,
         ...datalog.value.units,
+        [name]: units.DIMENSIONLESS,
       },
       readonly: {
-        [name]: false,
         ...datalog.value.readonly,
+        [name]: false,
       },
       populationStrategies: {
-        [name]: 'manual',
         ...datalog.value.populationStrategies,
+        [name]: 'manual',
       },
       formulae: {
-        [name]: '',
         ...datalog.value.formulae,
+        [name]: '',
       },
+      points: datalog.value.points.map((point) => ({
+        ...point,
+        [name]: 0,
+      })),
     };
   };
 
@@ -233,6 +238,7 @@
       units: objectUtil.deleteAtIndex(datalog.value.units, index),
       populationStrategies: objectUtil.deleteAtIndex(datalog.value.populationStrategies, index),
       formulae: objectUtil.deleteAtIndex(datalog.value.formulae, index),
+      points: datalog.value.points.map((point) => objectUtil.deleteAtIndex(point, index)),
     };
   };
 
@@ -242,6 +248,12 @@
       units: objectUtil.replaceAtIndex(datalog.value.units, index, newDataPoint.unit, newDataPoint.name),
       populationStrategies: objectUtil.replaceAtIndex(datalog.value.populationStrategies, index, newDataPoint.populationStrategy, newDataPoint.name),
       formulae: objectUtil.replaceAtIndex(datalog.value.formulae, index, newDataPoint.formula, newDataPoint.name),
+      points: datalog.value.points.map((point, pointIndex) => {
+        const value = newDataPoint.populationStrategy === 'formulaic'
+          ? calculateValue(point, pointIndex, newDataPoint.formula)
+          : Object.values(point)[index]; // retain existing value
+        return objectUtil.replaceAtIndex(point, index, value, newDataPoint.name);
+      }),
     };
   }
 
