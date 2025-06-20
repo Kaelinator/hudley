@@ -34,7 +34,7 @@
   const rowCount = ref(0);
   watchEffect(() => {
     if (!datalog.value) return;
-    columnCount.value = Object.keys(datalog.value.units).length;
+    columnCount.value = Object.keys(datalog.value.units).length + 1; // + 1 because we add index
     rowCount.value = datalog.value.points.length;
     selected.value = Array(columnCount.value * rowCount.value).fill(false);
   });
