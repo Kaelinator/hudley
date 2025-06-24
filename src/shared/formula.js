@@ -33,7 +33,18 @@ export const parse = (formula) => {
       continue;
     }
 
-    if (type == types.NUMBER && (isDigit(charCode) || isDecimal(charCode))) {
+    if (type === types.NUMBER && (isDigit(charCode) || isDecimal(charCode))) {
+      token += char;
+      continue;
+    }
+
+    if (!type && isAlpha(charCode)) {
+      type = types.IDENTIFIER;
+      token += char;
+      continue;
+    }
+
+    if (type === types.IDENTIFIER && (isAlpha(charCode) || isDigit(charCode))) {
       token += char;
       continue;
     }

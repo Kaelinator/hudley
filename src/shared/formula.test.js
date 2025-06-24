@@ -130,3 +130,57 @@ test('parses parentheses, operators, and numbers', () => {
     { type: types.PARENTHESIS, value: ')' },
   ])
 });
+
+test('parses identifier', () => {
+  expect(parse('var')).toEqual([{ type: types.IDENTIFIER, value: 'var' }]);
+  expect(parse('var0')).toEqual([{ type: types.IDENTIFIER, value: 'var0' }]);
+});
+
+test('parses multiple identifiers', () => {
+  expect(parse('var0 var1')).toEqual([
+    { type: types.IDENTIFIER, value: 'var0' },
+    { type: types.IDENTIFIER, value: 'var1' },
+  ]);
+  expect(parse('x y z')).toEqual([
+    { type: types.IDENTIFIER, value: 'x' },
+    { type: types.IDENTIFIER, value: 'y' },
+    { type: types.IDENTIFIER, value: 'z' },
+  ]);
+});
+
+test('parses identifiers, numbers, operators, and parentheses', () => {
+  expect(parse('(var0 + 10)')).toEqual([
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.IDENTIFIER, value: 'var0' },
+    { type: types.OPERATOR, value: '+' },
+    { type: types.NUMBER, value: 10 },
+    { type: types.PARENTHESIS, value: ')' },
+  ]);
+  expect(parse('(var0+10*anotherVar/x)')).toEqual([
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.IDENTIFIER, value: 'var0' },
+    { type: types.OPERATOR, value: '+' },
+    { type: types.NUMBER, value: 10 },
+    { type: types.OPERATOR, value: '*' },
+    { type: types.IDENTIFIER, value: 'anotherVar' },
+    { type: types.OPERATOR, value: '/' },
+    { type: types.IDENTIFIER, value: 'x' },
+    { type: types.PARENTHESIS, value: ')' },
+  ]);
+});
+
+test('parses ambiguous formulae', () => {
+  expect(parse('5var')).toEqual([
+    { type: types.NUMBER, value: 5 },
+    { type: types.IDENTIFIER, value: 'var' },
+  ]);
+  expect(parse('var200.5')).toEqual([
+    { type: types.IDENTIFIER, value: 'var200' },
+    { type: types.NUMBER, value: 0.5 },
+  ]);
+});
+
+test('refuses to parse incorrect formulae', () => {
+  expect(() => parse('var0.var1')).toThrowError('is not a number');
+  expect(() => parse('(+.-)')).toThrowError('is not a number');
+});
