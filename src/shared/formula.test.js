@@ -1,10 +1,6 @@
 import { expect, test } from 'vitest';
 import { parse, calculateValue, types } from './formula';
 
-// test('returns literal number for formula with only literal number', () => {
-//   expect(calculateValue({}, 1, '5')).toEqual(5);
-// });
-
 test('parse returns single digit number', () => {
   expect(parse('0')).toEqual([{ type: types.NUMBER, value: 0 }]);
   expect(parse('5')).toEqual([{ type: types.NUMBER, value: 5 }]);
@@ -63,4 +59,74 @@ test('returns n numbers', () => {
     { type: types.NUMBER, value: 232 },
     { type: types.NUMBER, value: 3.14 },
   ]);
+});
+
+test('parses operators +, -, *, /', () => {
+  expect(parse('+')).toEqual([{ type: types.OPERATOR, value: '+' }]);
+  expect(parse('-')).toEqual([{ type: types.OPERATOR, value: '-' }]);
+  expect(parse('*')).toEqual([{ type: types.OPERATOR, value: '*' }]);
+  expect(parse('/')).toEqual([{ type: types.OPERATOR, value: '/' }]);
+});
+
+test('parses multiple operators', () => {
+  expect(parse('++')).toEqual([
+    { type: types.OPERATOR, value: '+' },
+    { type: types.OPERATOR, value: '+' },
+  ]);
+  expect(parse('- -   -')).toEqual([
+    { type: types.OPERATOR, value: '-' },
+    { type: types.OPERATOR, value: '-' },
+    { type: types.OPERATOR, value: '-' },
+  ]);
+  expect(parse('+-*/')).toEqual([
+    { type: types.OPERATOR, value: '+' },
+    { type: types.OPERATOR, value: '-' },
+    { type: types.OPERATOR, value: '*' },
+    { type: types.OPERATOR, value: '/' },
+  ]);
+});
+
+test('parses operators and numbers', () => {
+  expect(parse('5+5')).toEqual([
+    { type: types.NUMBER, value: 5 },
+    { type: types.OPERATOR, value: '+' },
+    { type: types.NUMBER, value: 5 },
+  ]);
+  expect(parse('50+   0.500--5')).toEqual([
+    { type: types.NUMBER, value: 50 },
+    { type: types.OPERATOR, value: '+' },
+    { type: types.NUMBER, value: 0.5 },
+    { type: types.OPERATOR, value: '-' },
+    { type: types.OPERATOR, value: '-' },
+    { type: types.NUMBER, value: 5 },
+  ]);
+});
+
+test('parses parenthesis', () => {
+  expect(parse('(')).toEqual([{ type: types.PARENTHESIS, value: '(' }]);
+  expect(parse(')')).toEqual([{ type: types.PARENTHESIS, value: ')' }]);
+});
+
+test('parses multiple parentheses', () => {
+  expect(parse('()')).toEqual([
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.PARENTHESIS, value: ')' },
+  ]);
+  expect(parse('(()  ()')).toEqual([
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.PARENTHESIS, value: ')' },
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.PARENTHESIS, value: ')' },
+  ]);
+});
+
+test('parses parentheses, operators, and numbers', () => {
+  expect(parse('(5+5)')).toEqual([
+    { type: types.PARENTHESIS, value: '(' },
+    { type: types.NUMBER, value: 5 },
+    { type: types.OPERATOR, value: '+' },
+    { type: types.NUMBER, value: 5 },
+    { type: types.PARENTHESIS, value: ')' },
+  ])
 });

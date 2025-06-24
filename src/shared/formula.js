@@ -15,6 +15,7 @@ const isDigit = (charCode) => charCode >= 48 && charCode <= 57;
 const isDecimal = (charCode) => charCode === 46;
 const isWhitespace = (charCode) => charCode === 9 || charCode === 32;
 const isOperator = (charCode) => charCode === 42 || charCode === 43 || charCode === 45 || charCode == 47;
+const isParenthesis = (charCode) => charCode === 40 || charCode === 41;
 export const parse = (formula) => {
   if (formula.length === 0) {
     return [];
@@ -32,7 +33,19 @@ export const parse = (formula) => {
       continue;
     }
 
-    if (isDigit(charCode) || isDecimal(charCode)) {
+    if (type == types.NUMBER && (isDigit(charCode) || isDecimal(charCode))) {
+      token += char;
+      continue;
+    }
+
+    if (!type && isOperator(charCode)) {
+      type = types.OPERATOR;
+      token += char;
+      continue;
+    }
+
+    if (!type && isParenthesis(charCode)) {
+      type = types.PARENTHESIS;
       token += char;
       continue;
     }
@@ -56,7 +69,7 @@ export const parse = (formula) => {
     ? +token
     : token;
 
-  if (type === types.NUMBER && isNaN(value)) {
+  if (type === types.NUMBER && Number.isNaN(value)) {
     throw Error(`Error parsing token: '${token}' is not a number`);
   }
 
