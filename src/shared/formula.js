@@ -90,4 +90,8 @@ export const parse = (formula) => {
   ];
 };
 
+export const infixToPrefix = (tokens) => {
+  return tokens;
+};
+
 // export const evaluate = (expression) => typeof expression[0]
