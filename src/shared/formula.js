@@ -90,7 +90,41 @@ export const parse = (formula) => {
   ];
 };
 
-export const infixToPrefix = (tokens) => {
+const addAsRoot = (left, root) => {
+  // const leftHeight = Math.log2(left.length);
+  return [
+    root,
+    new Array(left.length * 2)
+      .fill(null)
+      .map((_, i) => i),
+  ]
+};
+
+const addAsChild = (root, child) => [
+  root,
+  child,
+];
+
+const PRIORITY = {
+  '(': 0,
+  ')': 0,
+  '*': 1,
+  '/': 1,
+  '/': 1,
+  '+': 2,
+  '-': 2,
+}
+
+/*
+ * If number:
+ * - fill current node
+ * If operator:
+ *  - If operator has less priority than or equal priority to current node's parent, then move to parent
+ * - make current node child of new operator parent, then move to right child
+ *
+ * or something like that
+ */
+export const infixToTree = (tokens) => {
   return tokens;
 };
 

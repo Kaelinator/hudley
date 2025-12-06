@@ -192,19 +192,19 @@ describe('parse', () => {
   });
 });
 
-describe('infixToPrefix', () => {
+describe('infixToTree', () => {
 
   test('converts nothing', () => {
-    expect(infixToPrefix([])).toEqual([]);
+    expect(infixToTree([])).toEqual([]);
   });
 
   test('converts single number or identifier', () => {
-    expect(infixToPrefix([
+    expect(infixToTree([
       { type: types.NUMBER, value: 5 },
     ])).toEqual([
       { type: types.NUMBER, value: 5 },
     ]);
-    expect(infixToPrefix([
+    expect(infixToTree([
       { type: types.IDENTIFIER, value: 'e' },
     ])).toEqual([
       { type: types.IDENTIFIER, value: 'e' },
@@ -212,7 +212,7 @@ describe('infixToPrefix', () => {
   });
 
   test('converts single simple operation', () => {
-    expect(infixToPrefix([
+    expect(infixToTree([
       { type: types.NUMBER, value: 5 },
       { type: types.OPERATOR, value: '*' },
       { type: types.NUMBER, value: 2 },
