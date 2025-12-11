@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { parse, infixToPrefix, types } from './formula';
+import { parse, infixToTree, types } from './formula';
 
 describe('parse', () => {
 

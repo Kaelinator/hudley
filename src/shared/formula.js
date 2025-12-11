@@ -8,6 +8,8 @@ export const types = {
   PARENTHESIS: Symbol.for('parenthesis'),
 };
 
+const { IDENTIFIER, NUMBER, OPERATOR, PARENTHESIS } = types;
+
 export const calculateValue = (point, index, formula) => 10 + index;
 
 const isAlpha = (charCode) => (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
@@ -28,35 +30,35 @@ export const parse = (formula) => {
     const char = formula[i];
     const charCode = formula.charCodeAt(i);
     if (!type && (isDigit(charCode) || isDecimal(charCode))) {
-      type = types.NUMBER;
+      type = NUMBER;
       token += char;
       continue;
     }
 
-    if (type === types.NUMBER && (isDigit(charCode) || isDecimal(charCode))) {
+    if (type === NUMBER && (isDigit(charCode) || isDecimal(charCode))) {
       token += char;
       continue;
     }
 
     if (!type && isAlpha(charCode)) {
-      type = types.IDENTIFIER;
+      type = IDENTIFIER;
       token += char;
       continue;
     }
 
-    if (type === types.IDENTIFIER && (isAlpha(charCode) || isDigit(charCode))) {
+    if (type === IDENTIFIER && (isAlpha(charCode) || isDigit(charCode))) {
       token += char;
       continue;
     }
 
     if (!type && isOperator(charCode)) {
-      type = types.OPERATOR;
+      type = OPERATOR;
       token += char;
       continue;
     }
 
     if (!type && isParenthesis(charCode)) {
-      type = types.PARENTHESIS;
+      type = PARENTHESIS;
       token += char;
       continue;
     }
@@ -76,11 +78,11 @@ export const parse = (formula) => {
     return [];
   }
 
-  const value = type === types.NUMBER
+  const value = type === NUMBER
     ? +token
     : token;
 
-  if (type === types.NUMBER && Number.isNaN(value)) {
+  if (type === NUMBER && Number.isNaN(value)) {
     throw Error(`Error parsing token: '${token}' is not a number`);
   }
 
@@ -90,20 +92,21 @@ export const parse = (formula) => {
   ];
 };
 
-const addAsRoot = (left, root) => {
-  // const leftHeight = Math.log2(left.length);
-  return [
-    root,
-    new Array(left.length * 2)
-      .fill(null)
-      .map((_, i) => i),
-  ]
-};
+/*
+ * Returns the parent of the node at index or null if this is root
+ * Assumes binary tree structured in level order
+ */
+const getParent = (tree, index) => {
+  if (index === 0)
+    return null;
 
-const addAsChild = (root, child) => [
-  root,
-  child,
-];
+  const level = Math.floor(Math.log2(index + 1));
+  const closestPower = Math.pow(2, level);
+  const distanceFromPower = index + 1 - closestPower;
+  const parentIndex = Math.pow(2, level - 1) + Math.floor(distanceFromPower / 2) - 1;
+
+  return tree[parentIndex];
+};
 
 const PRIORITY = {
   '(': 0,
@@ -123,9 +126,41 @@ const PRIORITY = {
  * - make current node child of new operator parent, then move to right child
  *
  * or something like that
+ *
+ * Returns binary tree structured in level order
+ * e.g.
+ *        a
+ *       / \
+ *      /   \
+ *     b     c
+ *    / \     \
+ *   d   e     g
+ *  = [a, b, c, d, e, null, g]
  */
-export const infixToTree = (tokens) => {
-  return tokens;
+export const infixToTree = (tokens, tree = [], index = 0) => {
+  if (tokens.length <= 0) {
+    return tree;
+  }
+  const token = tokens[0];
+
+  if (token.type === NUMBER || token.type === IDENTIFIER) {
+    tree[index] = token;
+    return infixToTree(tokens.slice(1), tree, index);
+  }
+
+  if (token.type === OPERATOR) {
+    const parent = getParent(tree, index);
+    if (parent.type !== OPERATOR) {
+      throw new Error('Invalid token type ' + parent.type);
+    }
+
+    if (PRIORITY[token.value] <= PRIORITY[parent.value]) {
+      // do something??
+    }
+  }
+
+  // todo: handle PARENTHESIS
+  return infixToTree(tokens.slice(1), tree, index);
 };
 
 // export const evaluate = (expression) => typeof expression[0]
