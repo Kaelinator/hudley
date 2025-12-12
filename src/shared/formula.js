@@ -1,3 +1,6 @@
+
+import { getParent } from './tree';
+
 /*
  *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, (, )
  */
@@ -92,21 +95,6 @@ export const parse = (formula) => {
   ];
 };
 
-/*
- * Returns the parent of the node at index or null if this is root
- * Assumes binary tree structured in level order
- */
-const getParent = (tree, index) => {
-  if (index === 0)
-    return null;
-
-  const level = Math.floor(Math.log2(index + 1));
-  const closestPower = Math.pow(2, level);
-  const distanceFromPower = index + 1 - closestPower;
-  const parentIndex = Math.pow(2, level - 1) + Math.floor(distanceFromPower / 2) - 1;
-
-  return tree[parentIndex];
-};
 
 const PRIORITY = {
   '(': 0,
@@ -133,9 +121,9 @@ const PRIORITY = {
  *       / \
  *      /   \
  *     b     c
- *    / \     \
- *   d   e     g
- *  = [a, b, c, d, e, null, g]
+ *    /     / \
+ *   d     f   g
+ *  = [a, b, c, d, null, f, g]
  */
 export const infixToTree = (tokens, tree = [], index = 0) => {
   if (tokens.length <= 0) {
@@ -150,11 +138,12 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
 
   if (token.type === OPERATOR) {
     const parent = getParent(tree, index);
-    if (parent.type !== OPERATOR) {
+
+    if (parent && parent.type !== OPERATOR) {
       throw new Error('Invalid token type ' + parent.type);
     }
 
-    if (PRIORITY[token.value] <= PRIORITY[parent.value]) {
+    if (parent && PRIORITY[token.value] <= PRIORITY[parent.value]) {
       // do something??
     }
   }
