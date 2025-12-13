@@ -2,7 +2,7 @@
 import { getParent, getParentIndex, insertParent, getRightChildIndex } from './tree';
 
 /*
- *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, (, )
+ *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, ^, (, )
  */
 export const types = {
   IDENTIFIER: Symbol.for('identifier'),
@@ -19,7 +19,7 @@ const isAlpha = (charCode) => (charCode >= 65 && charCode <= 90) || (charCode >=
 const isDigit = (charCode) => charCode >= 48 && charCode <= 57;
 const isDecimal = (charCode) => charCode === 46;
 const isWhitespace = (charCode) => charCode === 9 || charCode === 32;
-const isOperator = (charCode) => charCode === 42 || charCode === 43 || charCode === 45 || charCode == 47;
+const isOperator = (charCode) => charCode === 42 || charCode === 43 || charCode === 45 || charCode === 47 || charCode === 94;
 const isParenthesis = (charCode) => charCode === 40 || charCode === 41;
 export const parse = (formula) => {
   if (formula.length === 0) {
@@ -99,10 +99,11 @@ export const parse = (formula) => {
 const PRIORITY = {
   '(': 0,
   ')': 0,
-  '*': 1,
-  '/': 1,
-  '+': 2,
-  '-': 2,
+  '^': 1,
+  '*': 2,
+  '/': 2,
+  '+': 3,
+  '-': 3,
 }
 
 /*

@@ -67,11 +67,12 @@ describe('parse', () => {
     ]);
   });
 
-  test('handles operators +, -, *, /', () => {
+  test('handles operators +, -, *, /, ^', () => {
     expect(parse('+')).toEqual([{ type: types.OPERATOR, value: '+' }]);
     expect(parse('-')).toEqual([{ type: types.OPERATOR, value: '-' }]);
     expect(parse('*')).toEqual([{ type: types.OPERATOR, value: '*' }]);
     expect(parse('/')).toEqual([{ type: types.OPERATOR, value: '/' }]);
+    expect(parse('^')).toEqual([{ type: types.OPERATOR, value: '^' }]);
   });
 
   test('handles multiple operators', () => {
@@ -413,4 +414,87 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 1 },
     ]);
   });
+
+  test('converts with exponents', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 2 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 3 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '*' },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 3 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '^' },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      null, null, null,
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null, null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+  });
+
+  test('converts edge cases', () => {
+    expect(infixToTree([
+      { type: types.OPERATOR, value: '-' },
+      { type: types.IDENTIFIER, value: 'b' },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '+' },
+      { type: types.OPERATOR, value: '-' },
+      { type: types.NUMBER, value: 2 },
+      null,
+      { type: types.IDENTIFIER, value: 'b' },
+    ]);
+  });
 });
+
+// describe('evalute', () => {
+//   test('computes single number', () => {
+//     const tree = [
+//       { type: types.NUMBER, value: 2 },
+//     ]
+//     expect(evalute(tree, {})).toBe(2);
+//   })
+// });
