@@ -66,7 +66,7 @@ export const insertParent = (tree, index) => {
     ...((rightChildIndex >= tree.length) ? Array(rightChildIndex - tree.length + 1).fill(null) : [])
   ];
 
-  newTree[getLeftChildIndex(index)] = tree[index];
+  newTree[getLeftChildIndex(index)] = tree[index] === undefined ? null : tree[index];
   newTree[index] = null;
 
   return newTree;

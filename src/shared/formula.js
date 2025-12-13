@@ -1,5 +1,5 @@
 
-import { getParent } from './tree';
+import { getParent, getParentIndex, insertParent, getRightChildIndex } from './tree';
 
 /*
  *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, (, )
@@ -101,7 +101,6 @@ const PRIORITY = {
   ')': 0,
   '*': 1,
   '/': 1,
-  '/': 1,
   '+': 2,
   '-': 2,
 }
@@ -110,7 +109,7 @@ const PRIORITY = {
  * If number:
  * - fill current node
  * If operator:
- *  - If operator has less priority than or equal priority to current node's parent, then move to parent
+ *  - If operator has lower priority than or equal priority to current node's parent, then move to parent
  * - make current node child of new operator parent, then move to right child
  *
  * or something like that
@@ -136,20 +135,23 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
     return infixToTree(tokens.slice(1), tree, index);
   }
 
-  if (token.type === OPERATOR) {
-    const parent = getParent(tree, index);
+  const parent = getParent(tree, index);
 
-    if (parent && parent.type !== OPERATOR) {
-      throw new Error('Invalid token type ' + parent.type);
+  if (token.type === PARENTHESIS && token.value === ')') {
+    if (parent && parent.type !== PARENTHESIS) {
+      return infixToTree(tokens, tree, getParentIndex(index));
     }
-
-    if (parent && PRIORITY[token.value] <= PRIORITY[parent.value]) {
-      // do something??
-    }
+    return infixToTree(tokens.slice(1), tree, index);
   }
 
-  // todo: handle PARENTHESIS
-  return infixToTree(tokens.slice(1), tree, index);
+  if (parent && PRIORITY[token.value] >= PRIORITY[parent.value] && parent.type !== PARENTHESIS) {
+    index = getParentIndex(index);
+  }
+
+  const newTree = insertParent(tree, index);
+  newTree[index] = token;
+
+  return infixToTree(tokens.slice(1), newTree, getRightChildIndex(index));
 };
 
 // export const evaluate = (expression) => typeof expression[0]

@@ -55,6 +55,10 @@ describe('getRightChildIndex', () => {
 });
 
 describe('insertParent', () => {
+  test('inserts at empty tree', () => {
+    expect(insertParent([], 0)).toEqual([null, null, null]);
+  });
+
   test('inserts at root node', () => {
     expect(insertParent([0], 0)).toEqual([null, 0, null]);
     expect(insertParent([0, 1], 0)).toEqual([null, 0, null, 1, null]);

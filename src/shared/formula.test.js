@@ -222,4 +222,181 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 2 },
     ]);
   });
+
+  test('converts two operations of same priority', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '-' },
+      { type: types.NUMBER, value: 4 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '-' },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '/' },
+      { type: types.NUMBER, value: 4 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+  });
+  
+  test('converts two operations of different priority', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 4 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '*' },
+      null,
+      null,
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 4 },
+    ]);
+  });
+
+  test('converts multiple operations of different priority', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '/' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 5 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 6 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      null,
+      null,
+      { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '*' },
+      null,
+      null,
+      null,
+      null,
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 5 },
+      { type: types.NUMBER, value: 6 },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+  });
+
+  test('converts with operators and parenthesis', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      null,
+      null,
+      null,
+      { type: types.OPERATOR, value: '+' },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.PARENTHESIS, value: '(' },
+      null,
+      { type: types.OPERATOR, value: '+' },
+      null,
+      null,
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      null,
+      null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+    expect(infixToTree([
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      null,
+      null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 4 },
+    ]);
+  });
 });
