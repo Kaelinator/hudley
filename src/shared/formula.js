@@ -141,7 +141,7 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
     if (parent && parent.type !== PARENTHESIS) {
       return infixToTree(tokens, tree, getParentIndex(index));
     }
-    return infixToTree(tokens.slice(1), tree, index);
+    return infixToTree(tokens.slice(1), tree, getParentIndex(index));
   }
 
   if (parent && PRIORITY[token.value] >= PRIORITY[parent.value] && parent.type !== PARENTHESIS) {

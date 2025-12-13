@@ -45,7 +45,8 @@ export const isRightChild = (index) => index !== 0 && index % 2 === 0;
  */
 export const insertParent = (tree, index) => {
   const leftChild = getLeftChild(tree, index);
-  if (leftChild !== null) {
+  const rightChild = getRightChild(tree, index);
+  if (leftChild !== null || rightChild !== null) {
     const leftChildIndex = getLeftChildIndex(index);
     const newTree = insertParent(tree, leftChildIndex);
 

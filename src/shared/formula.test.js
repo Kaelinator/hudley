@@ -264,8 +264,7 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '+' },
       { type: types.NUMBER, value: 2 },
       { type: types.OPERATOR, value: '*' },
-      null,
-      null,
+      null, null,
       { type: types.NUMBER, value: 3 },
       { type: types.NUMBER, value: 4 },
     ]);
@@ -288,32 +287,21 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '+' },
       { type: types.NUMBER, value: 1 },
       { type: types.OPERATOR, value: '+' },
-      null,
-      null,
+      null, null,
       { type: types.OPERATOR, value: '/' },
       { type: types.OPERATOR, value: '*' },
-      null,
-      null,
-      null,
-      null,
+      null, null, null, null,
       { type: types.OPERATOR, value: '*' },
       { type: types.NUMBER, value: 4 },
       { type: types.NUMBER, value: 5 },
       { type: types.NUMBER, value: 6 },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      null, null, null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
     ]);
   });
 
-  test('converts with operators and parenthesis', () => {
+  test('converts with operators and parentheses', () => {
     expect(infixToTree([
       { type: types.NUMBER, value: 1 },
       { type: types.OPERATOR, value: '*' },
@@ -326,16 +314,9 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '*' },
       { type: types.NUMBER, value: 1 },
       { type: types.PARENTHESIS, value: '(' },
-      null,
-      null,
-      null,
+      null, null, null,
       { type: types.OPERATOR, value: '+' },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
     ]);
@@ -350,8 +331,7 @@ describe('infixToTree', () => {
       { type: types.PARENTHESIS, value: '(' },
       null,
       { type: types.OPERATOR, value: '+' },
-      null,
-      null,
+      null, null,
       { type: types.NUMBER, value: 1 },
       { type: types.NUMBER, value: 2 },
     ]);
@@ -367,11 +347,11 @@ describe('infixToTree', () => {
       { type: types.PARENTHESIS, value: '(' },
       { type: types.NUMBER, value: 1 },
       { type: types.OPERATOR, value: '+' },
-      null,
-      null,
+      null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
     ]);
+
     expect(infixToTree([
       { type: types.NUMBER, value: 1 },
       { type: types.OPERATOR, value: '+' },
@@ -385,18 +365,52 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '+' },
       { type: types.NUMBER, value: 1 },
       { type: types.PARENTHESIS, value: '(' },
-      null,
-      null,
+      null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.OPERATOR, value: '+' },
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+      null, null, null, null, null, null,
       { type: types.NUMBER, value: 3 },
       { type: types.NUMBER, value: 4 },
+    ]);
+  });
+  test('converts with multiple sets of parentheses', () => {
+    expect(infixToTree([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.PARENTHESIS, value: ')' },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.PARENTHESIS, value: '(' },
+      null,
+      { type: types.OPERATOR, value: '+' },
+      null, null,
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      null, null, null, null, null, null, null,
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: ')' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.PARENTHESIS, value: ')' },
+    ])).toEqual([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      null,
+      { type: types.NUMBER, value: 1 },
     ]);
   });
 });

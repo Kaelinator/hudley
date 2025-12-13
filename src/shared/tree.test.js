@@ -62,6 +62,7 @@ describe('insertParent', () => {
   test('inserts at root node', () => {
     expect(insertParent([0], 0)).toEqual([null, 0, null]);
     expect(insertParent([0, 1], 0)).toEqual([null, 0, null, 1, null]);
+    expect(insertParent([0, null, 1], 0)).toEqual([null, 0, null, null, 1]);
     expect(insertParent([0, 1, 2], 0)).toEqual([null, 0, null, 1, 2]);
   });
 
