@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { parse, infixToTree, types } from './formula';
+import { parse, infixToTree, types, evaluate } from './formula';
 
 describe('parse', () => {
 
@@ -85,11 +85,12 @@ describe('parse', () => {
       { type: types.OPERATOR, value: '-' },
       { type: types.OPERATOR, value: '-' },
     ]);
-    expect(parse('+-*/')).toEqual([
+    expect(parse('+-*/^')).toEqual([
       { type: types.OPERATOR, value: '+' },
       { type: types.OPERATOR, value: '-' },
       { type: types.OPERATOR, value: '*' },
       { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '^' },
     ]);
   });
 
@@ -490,11 +491,190 @@ describe('infixToTree', () => {
   });
 });
 
-// describe('evalute', () => {
-//   test('computes single number', () => {
-//     const tree = [
-//       { type: types.NUMBER, value: 2 },
-//     ]
-//     expect(evalute(tree, {})).toBe(2);
-//   })
-// });
+describe('evaluate', () => {
+  test('computes single number', () => {
+    const tree = [
+      { type: types.NUMBER, value: 5 },
+    ];
+    expect(evaluate(tree, {})).toBe(5);
+  });
+
+  test('computes single identifier', () => {
+    const tree = [
+      { type: types.IDENTIFIER, value: 'b' },
+    ];
+    expect(evaluate(tree, { b: 2 })).toBe(2);
+  });
+
+  test('computes 1+2', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ];
+    expect(evaluate(tree, {})).toBe(3);
+  });
+
+  test('computes negative', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '-' },
+      { type: types.NUMBER, value: 1 },
+      null,
+    ];
+    expect(evaluate(tree, {})).toBe(-1);
+  });
+
+  test('computes 2+3-4', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '-' },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(1);
+  });
+
+  test('computes 2*3/4', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(1.5);
+  });
+
+  test('computes 2+3*4', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '*' },
+      null, null,
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 4 },
+    ];
+    expect(evaluate(tree, {})).toBe(14);
+  });
+
+  test('computes 1+2*3/4+5*6', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      null, null,
+      { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '*' },
+      null, null, null, null,
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 5 },
+      { type: types.NUMBER, value: 6 },
+      null, null, null, null, null, null, null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(32.5);
+  });
+
+  test('computes 5*(2+3)', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 5 },
+      { type: types.PARENTHESIS, value: '(' },
+      null, null, null,
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null, null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(25);
+  });
+
+  test('computes (1+2)', () => {
+    const tree = [
+      { type: types.PARENTHESIS, value: '(' },
+      null,
+      { type: types.OPERATOR, value: '+' },
+      null, null,
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 2 },
+    ];
+    expect(evaluate(tree, {})).toBe(3);
+  });
+
+  test('computes 5(2+3)', () => {
+    const tree = [
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 5 },
+      { type: types.OPERATOR, value: '+' },
+      null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(25);
+  });
+
+  test('computes 1+2(3+4)', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.PARENTHESIS, value: '(' },
+      null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null, null, null,
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 4 },
+    ];
+    expect(evaluate(tree, {})).toBe(15);
+  });
+
+  test('computes (3)(2)', () => {
+    const tree = [
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      null,
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(6);
+  });
+
+  test('computes 5^2*3', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '*' },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 5 },
+      { type: types.NUMBER, value: 2 },
+    ];
+    expect(evaluate(tree, {})).toBe(75);
+  });
+
+  test('computes 5^(2+3)', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 5 },
+      { type: types.PARENTHESIS, value: '(' },
+      null, null, null,
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null, null, null,
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 3 },
+    ];
+    expect(evaluate(tree, {})).toBe(3125);
+  });
+
+  test('computes -5+2', () => {
+    const tree = [
+      { type: types.OPERATOR, value: '+' },
+      { type: types.OPERATOR, value: '-' },
+      { type: types.NUMBER, value: 2 },
+      null,
+      { type: types.NUMBER, value: 5 },
+    ];
+    expect(evaluate(tree, {})).toBe(-3);
+  });
+});

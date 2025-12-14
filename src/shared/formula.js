@@ -1,5 +1,5 @@
 
-import { getParent, getParentIndex, insertParent, getRightChildIndex } from './tree';
+import { getParent, getParentIndex, insertParent, getRightChildIndex, getLeftSubTree, getRightSubTree } from './tree';
 
 /*
  *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, ^, (, )
@@ -155,4 +155,52 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
   return infixToTree(tokens.slice(1), newTree, getRightChildIndex(index));
 };
 
-// export const evaluate = (expression) => typeof expression[0]
+export const evaluate = (tree, values) => {
+  if (tree.length <= 0) return 0; // not an exit condition
+  
+  const node = tree[0];
+  if (node === null) {
+    return null;
+  }
+
+  if (node.type === NUMBER) {
+    return node.value;
+  }
+
+  if (node.type === IDENTIFIER) {
+    return values[node.value];
+  }
+
+  if (node.type === OPERATOR) {
+    const left = evaluate(getLeftSubTree(tree), values);
+    const right = evaluate(getRightSubTree(tree), values);
+    switch (node.value) {
+      case '+':
+        return left + right;
+
+      case '-':
+        if (right === null) return -left;
+        return left - right;
+
+      case '*':
+        return left * right;
+
+      case '/':
+        return left / right;
+
+      case '^':
+        return Math.pow(left, right);
+
+      default: throw new Error(`Invalid operator: ${node.value}`);
+    }
+  }
+
+  if (node.type === PARENTHESIS) {
+    const left = evaluate(getLeftSubTree(tree), values);
+    const right = evaluate(getRightSubTree(tree), values);
+    if (left === null) return right;
+    return left * right;
+  }
+
+  throw new Error(`Invalid node type: ${node.type}`);
+};

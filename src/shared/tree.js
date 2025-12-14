@@ -72,3 +72,33 @@ export const insertParent = (tree, index) => {
 
   return newTree;
 };
+
+const getLeftSubTreeLength = (length) => {
+
+  if (length === 0) return 0;
+
+  const completeLevels = Math.floor(Math.log2(length + 1))
+  const rightTreeLength = Math.pow(2, completeLevels - 1) - 1
+  const nodesInLastLevel = length - (Math.pow(2, completeLevels) - 1)
+
+  return length - rightTreeLength - Math.max(0, nodesInLastLevel - Math.pow(2, completeLevels - 1)) - 1
+};
+
+export const getLeftSubTree = (tree) => new Array(getLeftSubTreeLength(tree.length))
+  .fill()
+  .map((_, i) => i === 0
+    ? tree[1]
+    : tree[i + (1 << Math.floor(Math.log2(i + 1)))]
+  );
+
+const getRightSubTreeLength = (length) => {
+  if (length === 0) return 0;
+  return length - getLeftSubTreeLength(length) - 1;
+};
+
+export const getRightSubTree = (tree) => new Array(getRightSubTreeLength(tree.length))
+  .fill()
+  .map((_, i) => i === 0
+    ? tree[2]
+    : tree[i + (1 << (Math.floor(Math.log2(i + 1)) + 1))]
+  );
