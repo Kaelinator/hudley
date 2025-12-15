@@ -99,7 +99,7 @@
   import Spreadsheet from './components/Spreadsheet.vue';
 
   import { units } from '../shared/units';
-  import { calculateValue } from '../shared/formula';
+  import { calculate } from '../shared/formula';
   import * as canvasUtil from './utils/canvas';
   import * as objectUtil from './utils/object';
 
@@ -250,7 +250,7 @@
       formulae: objectUtil.replaceAtIndex(datalog.value.formulae, index, newDataPoint.formula, newDataPoint.name),
       points: datalog.value.points.map((point, pointIndex) => {
         const value = newDataPoint.populationStrategy === 'formulaic'
-          ? calculateValue(point, pointIndex, newDataPoint.formula)
+          ? calculate(newDataPoint.formula, point)
           : Object.values(point)[index]; // retain existing value
         return objectUtil.replaceAtIndex(point, index, value, newDataPoint.name);
       }),
