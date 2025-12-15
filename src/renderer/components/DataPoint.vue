@@ -103,7 +103,7 @@
         populationStrategy.value !== 'formulaic'
           ? {}
           : { formula: formula.value }
-      )
+      ),
     });
   };
 

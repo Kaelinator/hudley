@@ -1,5 +1,7 @@
 import { expect, test, describe } from 'vitest';
-import { getParentIndex, getLeftChildIndex, getRightChildIndex, insertParent, getLeftSubTree, getRightSubTree } from './tree';
+import {
+  getParentIndex, getLeftChildIndex, getRightChildIndex, insertParent, getLeftSubTree, getRightSubTree,
+} from './tree';
 
 describe('getParentIndex', () => {
   test('returns negative if root', () => {
@@ -83,7 +85,7 @@ describe('insertParent', () => {
 
   test('inserts and moves descendants', () => {
     expect(insertParent([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 2))
-      .toEqual([0, 1, null, 3, 4, 2, null, 7, 8, 9, 10, 5, 6, null, null, null, null, null, null, null, null, null, null, 11, 12, 13, 14, null, null, null, null])
+      .toEqual([0, 1, null, 3, 4, 2, null, 7, 8, 9, 10, 5, 6, null, null, null, null, null, null, null, null, null, null, 11, 12, 13, 14, null, null, null, null]);
   });
 
   test('inserts at nonexistent node', () => {

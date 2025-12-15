@@ -1,5 +1,6 @@
-
-import { getParent, getParentIndex, insertParent, getRightChildIndex, getLeftSubTree, getRightSubTree } from './tree';
+import {
+  getParent, getParentIndex, insertParent, getRightChildIndex, getLeftSubTree, getRightSubTree,
+} from './tree';
 
 /*
  *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, ^, (, )
@@ -12,9 +13,9 @@ export const types = {
   NOOP: Symbol.for('noop'),
 };
 
-const { IDENTIFIER, NUMBER, OPERATOR, PARENTHESIS, NOOP } = types;
-
-export const calculateValue = (point, index, formula) => 10 + index;
+const {
+  IDENTIFIER, NUMBER, OPERATOR, PARENTHESIS, NOOP,
+} = types;
 
 const isAlpha = (charCode) => (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
 const isDigit = (charCode) => charCode >= 48 && charCode <= 57;
@@ -96,7 +97,6 @@ export const parse = (formula) => {
   ];
 };
 
-
 const PRIORITY = {
   '(': 0,
   ')': 0,
@@ -105,7 +105,7 @@ const PRIORITY = {
   '/': 2,
   '+': 3,
   '-': 3,
-}
+};
 
 /*
  * If number:
@@ -163,7 +163,7 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
 
 export const evaluate = (tree, values) => {
   if (tree.length <= 0) return 0; // not an exit condition
-  
+
   const node = tree[0];
   if (node === null) {
     return null;
@@ -195,7 +195,7 @@ export const evaluate = (tree, values) => {
         return left / right;
 
       case '^':
-        return Math.pow(left, right);
+        return left ** right;
 
       default: throw new Error(`Invalid operator: ${node.value}`);
     }
@@ -209,7 +209,7 @@ export const evaluate = (tree, values) => {
   }
 
   if (node.type === NOOP) {
-    return null;   
+    return null;
   }
 
   throw new Error(`Invalid node type: ${node.type}`);
