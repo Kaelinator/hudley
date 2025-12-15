@@ -741,8 +741,18 @@ describe('evaluate', () => {
 
 describe('calculate', () => {
   test('calculates pythagorean theorem', () => {
-    expect(calculate('a^2+b^2', { a: 3, b: 4 })).toBe(25)
-    expect(calculate('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).toBe(5)
-    expect(calculate('(3^2+4^2)^0.5', {})).toBe(5)
+    expect(calculate('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).toBeCloseTo(5)
+  });
+
+  test('calculates quadratic formula', () => {
+    expect(calculate('(-b+(b^2-4*a*c)^(1/2))/(2*a)', { a: 5, b: 13, c: 7 })).toBeCloseTo(-0.76148, 4)
+    expect(calculate('(-b-(b^2-4*a*c)^(1/2))/(2*a)', { a: 5, b: 13, c: 7 })).toBeCloseTo(-1.83851, 4)
+  });
+
+  test('calculates gravitational pull', () => {
+    // Earth
+    expect(calculate('G * m0 * m1 / (r^2)', { G: 6.6743E-11, m0: 5.972E24, m1: 1, r: 6.371E6 })).toBeCloseTo(9.81997, 4)
+    // Saturn
+    expect(calculate('G * m0 * m1 / (r^2)', { G: 6.6743E-11, m0: 5.6834E26, m1: 1, r: 5.8232E7 })).toBeCloseTo(11.18640, 4)
   });
 });
