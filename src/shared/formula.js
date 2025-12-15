@@ -9,9 +9,10 @@ export const types = {
   NUMBER: Symbol.for('number'),
   OPERATOR: Symbol.for('operator'),
   PARENTHESIS: Symbol.for('parenthesis'),
+  NOOP: Symbol.for('noop'),
 };
 
-const { IDENTIFIER, NUMBER, OPERATOR, PARENTHESIS } = types;
+const { IDENTIFIER, NUMBER, OPERATOR, PARENTHESIS, NOOP } = types;
 
 export const calculateValue = (point, index, formula) => 10 + index;
 
@@ -149,6 +150,11 @@ export const infixToTree = (tokens, tree = [], index = 0) => {
     index = getParentIndex(index);
   }
 
+  // edge case for open parenthesis
+  if (tree[index] === null || index >= tree.length) {
+    tree[index] = { type: NOOP };
+  }
+
   const newTree = insertParent(tree, index);
   newTree[index] = token;
 
@@ -202,5 +208,11 @@ export const evaluate = (tree, values) => {
     return left * right;
   }
 
+  if (node.type === NOOP) {
+    return null;   
+  }
+
   throw new Error(`Invalid node type: ${node.type}`);
 };
+
+export const calculate = (expression, values) => evaluate(infixToTree(parse(expression)), values);

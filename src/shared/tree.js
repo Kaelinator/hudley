@@ -39,39 +39,48 @@ export const isLeftChild = (index) => index % 2 === 1;
 export const isRightChild = (index) => index !== 0 && index % 2 === 0;
 
 /**
+ * Creates array from a to b, inclusive
+ */
+const range = (a, b) => Array(b - a + 1).fill().map((_, i) => a + i);
+
+const copyDown = (tree, left, right) => {
+  const areAllNull = range(left, right)
+    .every(i => tree[i] === null || i >= tree.length);
+
+  let newTree = tree.concat(); // make copy
+  if (!areAllNull) {
+    newTree = copyDown(tree, getLeftChildIndex(left), getRightChildIndex(right));
+  }
+
+  if (right >= newTree.length) {
+    // resize
+    newTree = newTree.concat(range(newTree.length, right).fill(null));
+  }
+
+  if (left === right) {
+    newTree[left] = null;
+    return newTree;
+  }
+
+  const startParent = getParentIndex(left);
+  range(0, Math.floor((right - left) / 2))
+    .forEach(i => {
+      newTree[left + i] = newTree[startParent + i] !== undefined ? newTree[startParent + i] : null;
+      newTree[startParent + i] = null;
+    });
+
+  return newTree;
+};
+
+/**
  * returns modified tree such that a parent is inserted at index
  * and node at index becomes the new node's left child and all
  * descendants are updated accordingly
  */
 export const insertParent = (tree, index) => {
-  const leftChild = getLeftChild(tree, index);
-  const rightChild = getRightChild(tree, index);
-  if (leftChild !== null || rightChild !== null) {
-    const leftChildIndex = getLeftChildIndex(index);
-    const newTree = insertParent(tree, leftChildIndex);
-
-    newTree[leftChildIndex] = tree[index];
-    newTree[getLeftChildIndex(leftChildIndex)] = leftChild;
-
-    const rightChild = getRightChild(tree, index);
-    newTree[getRightChildIndex(index)] = null;
-    newTree[getRightChildIndex(leftChildIndex)] = rightChild;
-
-    newTree[index] = null;
-    return newTree;
-  }
-
-  const rightChildIndex = getRightChildIndex(index);
-  const newTree = [
-    ...tree,
-    ...((rightChildIndex >= tree.length) ? Array(rightChildIndex - tree.length + 1).fill(null) : [])
-  ];
-
-  newTree[getLeftChildIndex(index)] = tree[index] === undefined ? null : tree[index];
-  newTree[index] = null;
-
-  return newTree;
+  return copyDown(tree, index, index);
 };
+
 
 const getLeftSubTreeLength = (length) => {
 
@@ -102,3 +111,4 @@ export const getRightSubTree = (tree) => new Array(getRightSubTreeLength(tree.le
     ? tree[2]
     : tree[i + (1 << (Math.floor(Math.log2(i + 1)) + 1))]
   );
+

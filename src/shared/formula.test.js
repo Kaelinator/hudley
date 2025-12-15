@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { parse, infixToTree, types, evaluate } from './formula';
+import { parse, infixToTree, types, evaluate, calculate } from './formula';
 
 describe('parse', () => {
 
@@ -238,6 +238,7 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 4 },
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
+      null, null,
     ]);
 
     expect(infixToTree([
@@ -252,6 +253,7 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 4 },
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
+      null, null,
     ]);
   });
   
@@ -300,6 +302,7 @@ describe('infixToTree', () => {
       null, null, null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
+      null, null, null, null, null, null,
     ]);
   });
 
@@ -316,7 +319,8 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '*' },
       { type: types.NUMBER, value: 1 },
       { type: types.PARENTHESIS, value: '(' },
-      null, null, null,
+      null, null,
+      { type: types.NOOP },
       { type: types.OPERATOR, value: '+' },
       null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
@@ -331,7 +335,7 @@ describe('infixToTree', () => {
       { type: types.PARENTHESIS, value: ')' },
     ])).toEqual([
       { type: types.PARENTHESIS, value: '(' },
-      null,
+      { type: types.NOOP },
       { type: types.OPERATOR, value: '+' },
       null, null,
       { type: types.NUMBER, value: 1 },
@@ -373,8 +377,29 @@ describe('infixToTree', () => {
       null, null, null, null, null, null,
       { type: types.NUMBER, value: 3 },
       { type: types.NUMBER, value: 4 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 1 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.PARENTHESIS, value: ')' },
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 2 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '*' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NOOP },
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null,
+      { type: types.NUMBER, value: 1 },
+      { type: types.NUMBER, value: 3 },
+      null, null, null, null,
     ]);
   });
+
   test('converts with multiple sets of parentheses', () => {
     expect(infixToTree([
       { type: types.PARENTHESIS, value: '(' },
@@ -388,12 +413,13 @@ describe('infixToTree', () => {
       { type: types.PARENTHESIS, value: ')' },
     ])).toEqual([
       { type: types.PARENTHESIS, value: '(' },
-      null,
+      { type: types.NOOP },
       { type: types.OPERATOR, value: '+' },
       null, null,
       { type: types.NUMBER, value: 1 },
       { type: types.PARENTHESIS, value: '(' },
-      null, null, null, null, null, null, null,
+      null, null, null, null, null, null,
+      { type: types.NOOP },
       { type: types.OPERATOR, value: '+' },
       null, null, null, null, null, null, null, null, null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
@@ -411,8 +437,9 @@ describe('infixToTree', () => {
       { type: types.PARENTHESIS, value: '(' },
       { type: types.PARENTHESIS, value: '(' },
       { type: types.NUMBER, value: 2 },
-      null,
+      { type: types.NOOP },
       { type: types.NUMBER, value: 1 },
+      null, null
     ]);
   });
 
@@ -439,6 +466,7 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 3 },
       { type: types.NUMBER, value: 1 },
       { type: types.NUMBER, value: 2 },
+      null, null,
     ]);
 
     expect(infixToTree([
@@ -453,6 +481,7 @@ describe('infixToTree', () => {
       { type: types.NUMBER, value: 3 },
       { type: types.NUMBER, value: 1 },
       { type: types.NUMBER, value: 2 },
+      null, null,
     ]);
 
     expect(infixToTree([
@@ -467,11 +496,41 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '^' },
       { type: types.NUMBER, value: 1 },
       { type: types.PARENTHESIS, value: '(' },
-      null, null, null,
+      null, null,
+      { type: types.NOOP },
       { type: types.OPERATOR, value: '+' },
       null, null, null, null, null, null,
       { type: types.NUMBER, value: 2 },
       { type: types.NUMBER, value: 3 },
+    ]);
+
+    expect(infixToTree([
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 3 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.NUMBER, value: 4 },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 2 },
+      { type: types.PARENTHESIS, value: ')' },
+      { type: types.OPERATOR, value: '^' },
+      { type: types.NUMBER, value: 0.5 },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '^' },
+      { type: types.PARENTHESIS, value: '(' },
+      { type: types.NUMBER, value: 0.5 },
+      { type: types.NOOP },
+      { type: types.OPERATOR, value: '+' },
+      null, null, null, null,
+      { type: types.OPERATOR, value: '^' },
+      { type: types.OPERATOR, value: '^' },
+      null, null, null, null, null, null, null, null,
+      { type: types.NUMBER, value: 3 },
+      { type: types.NUMBER, value: 2 },
+      { type: types.NUMBER, value: 4 },
+      { type: types.NUMBER, value: 2 },
+      null, null, null, null, null, null, null, null,
     ]);
   });
 
@@ -485,8 +544,9 @@ describe('infixToTree', () => {
       { type: types.OPERATOR, value: '+' },
       { type: types.OPERATOR, value: '-' },
       { type: types.NUMBER, value: 2 },
-      null,
+      { type: types.NOOP },
       { type: types.IDENTIFIER, value: 'b' },
+      null, null,
     ]);
   });
 });
@@ -676,5 +736,13 @@ describe('evaluate', () => {
       { type: types.NUMBER, value: 5 },
     ];
     expect(evaluate(tree, {})).toBe(-3);
+  });
+});
+
+describe('calculate', () => {
+  test('calculates pythagorean theorem', () => {
+    expect(calculate('a^2+b^2', { a: 3, b: 4 })).toBe(25)
+    expect(calculate('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).toBe(5)
+    expect(calculate('(3^2+4^2)^0.5', {})).toBe(5)
   });
 });

@@ -56,14 +56,14 @@ describe('getRightChildIndex', () => {
 
 describe('insertParent', () => {
   test('inserts at empty tree', () => {
-    expect(insertParent([], 0)).toEqual([null, null, null]);
+    expect(insertParent([], 0)).toEqual([null]);
   });
 
   test('inserts at root node', () => {
     expect(insertParent([0], 0)).toEqual([null, 0, null]);
-    expect(insertParent([0, 1], 0)).toEqual([null, 0, null, 1, null]);
-    expect(insertParent([0, null, 1], 0)).toEqual([null, 0, null, null, 1]);
-    expect(insertParent([0, 1, 2], 0)).toEqual([null, 0, null, 1, 2]);
+    expect(insertParent([0, 1], 0)).toEqual([null, 0, null, 1, null, null, null]);
+    expect(insertParent([0, null, 1], 0)).toEqual([null, 0, null, null, 1, null, null]);
+    expect(insertParent([0, 1, 2], 0)).toEqual([null, 0, null, 1, 2, null, null]);
   });
 
   test('inserts at left node', () => {
@@ -77,8 +77,18 @@ describe('insertParent', () => {
   });
 
   test('inserts at nested node', () => {
-    expect(insertParent([0, 1, 2, 3, 4, 5, 6], 1)).toEqual([0, null, 2, 1, null, 5, 6, 3, 4]);
-    expect(insertParent([0, 1, 2, 3, 4, 5, 6], 2)).toEqual([0, 1, null, 3, 4, 2, null, null, null, null, null, 5, 6]);
+    expect(insertParent([0, 1, 2, 3, 4, 5, 6], 1)).toEqual([0, null, 2, 1, null, 5, 6, 3, 4, null, null]);
+    expect(insertParent([0, 1, 2, 3, 4, 5, 6], 2)).toEqual([0, 1, null, 3, 4, 2, null, null, null, null, null, 5, 6, null, null]);
+  });
+
+  test('inserts and moves descendants', () => {
+    expect(insertParent([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 2))
+      .toEqual([0, 1, null, 3, 4, 2, null, 7, 8, 9, 10, 5, 6, null, null, null, null, null, null, null, null, null, null, 11, 12, 13, 14, null, null, null, null])
+  });
+
+  test('inserts at nonexistent node', () => {
+    expect(insertParent([0, 1], 2)).toEqual([0, 1, null]);
+    expect(insertParent([0, 1, null], 2)).toEqual([0, 1, null]);
   });
 });
 
