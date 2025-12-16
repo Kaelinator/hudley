@@ -32,9 +32,10 @@
 </template>
 
 <script setup>
-  import { inject, ref, watch, watchEffect, useTemplateRef } from 'vue';
+  import { inject, defineEmits, ref, watch, watchEffect, useTemplateRef } from 'vue';
 
   const datalog = inject('datalog');
+  const emit = defineEmits(['cellEdit']);
 
   const selected = ref([]); // left to right, top to bottom
   const columnCount = ref(0);
@@ -109,24 +110,42 @@
 
   /* automatically select all text in text box upon clicking */
   const editingCell = useTemplateRef('editingCell');
-  watch([editingCell, lastClick], () => {
+  watch([editingCell, selected], () => {
     if (editingCell.value && editingCell.value[0]) {
-      setTimeout(() => editingCell.value[0].select());
+      setTimeout(() => editingCell.value && editingCell.value[0] && editingCell.value[0].select());
     }
   });
 
   const editCellValue = () => {
-    console.log('cell value', editingCellValue.value);
+    const udpatedPoints = datalog.value.points.map((point, pointIndex) => {
+      const row = selected.value.slice(pointIndex * columnCount.value, pointIndex * columnCount.value + columnCount.value);
 
+      if (row.every(cellIsSelected => !cellIsSelected)) {
+        // none of the values in this point are in the user's selection
+        return point;
+      }
+
+      return Object.entries(point)
+        .reduce((result, [key, value], index) => ({
+          ...result,
+          [key]: row[index + 1] ? +editingCellValue.value : value,
+        }), {});
+    });
+
+    emit('cellEdit', udpatedPoints);
+    escape();
   };
 
-  const handleEscape = ({ key }) => {
-    if (key !== 'Escape') return;
+  const escape = () => {
     editingCellValue.value = '';
     lastClick.value = -1;
     selected.value = [];
   };
-  window.addEventListener('keydown', (e) => handleEscape(e));
+
+  window.addEventListener('keydown', ({ key }) => {
+    if (key !== 'Escape') return;
+    escape();
+  });
 </script>
 
 <style module>

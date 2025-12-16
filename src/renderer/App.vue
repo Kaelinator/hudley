@@ -59,7 +59,7 @@
           <Canvas :width="canvasWidth" :height="canvasHeight" />
         </div>
         <div id="tab1" :class="$style.spreadsheetWrapper">
-          <Spreadsheet />
+          <Spreadsheet @cellEdit="handleCellEdit"/>
         </div>
       </Tabulator>
     </div>
@@ -256,6 +256,10 @@
       }),
     };
   }
+
+  const handleCellEdit = (updatedPoints) => {
+    datalog.value.points = updatedPoints;
+  };
 
   const fonts = ref([]);
   provide('fonts', fonts);
