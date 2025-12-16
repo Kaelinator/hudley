@@ -251,7 +251,7 @@
       points: datalog.value.points.map((point, pointIndex) => {
         const value = newDataPoint.populationStrategy === 'formulaic'
           ? calculate(newDataPoint.formula, point)
-          : Object.values(point)[index]; // retain existing value
+          : Object.values(point)[index] || 0; // retain existing value
         return objectUtil.replaceAtIndex(point, index, value, newDataPoint.name);
       }),
     };

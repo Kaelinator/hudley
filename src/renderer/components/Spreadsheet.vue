@@ -16,7 +16,15 @@
           v-for="(value, col) in [row, ...Object.values(point)]"
           @click="select(row, col)"
         >
-        {{ value.toFixed(0) }}
+          <input v-if="(lastClick === row * columnCount + col)"
+            type="text"
+            v-model="editingCellValue"
+            @change="editCellValue"
+            ref="editingCell"
+            :disabled="(lastClick !== row * columnCount + col)"
+            :class="$style.cellInput"
+          />
+          <template v-else>{{ value.toFixed(0) }}</template>
         </td>
       </tr>
     </tbody>
@@ -24,8 +32,7 @@
 </template>
 
 <script setup>
-  import { inject, ref, watchEffect } from 'vue';
-  // import { defineEmits, defineProps, inject, ref } from 'vue';
+  import { inject, ref, watch, watchEffect, useTemplateRef } from 'vue';
 
   const datalog = inject('datalog');
 
@@ -39,13 +46,20 @@
     selected.value = Array(columnCount.value * rowCount.value).fill(false);
   });
 
+  const getClickedCellValue = (row, col, { points, units }) => {
+    if (col === 0) return row; // easy return index
+    return points[row][Object.keys(units)[col - 1]];
+  };
+
   const lastClick = ref(-1);
+  const editingCellValue = ref(''); // lastClicked or something
   const select = (row, col) => {
     const clickedCell = row * columnCount.value + col;
     if (!keyIsDown.value['Control'] && !keyIsDown.value['Shift']) {
       selected.value = Array(columnCount.value * rowCount.value).fill(false);
       selected.value[clickedCell] = true;
       lastClick.value = clickedCell;
+      editingCellValue.value = getClickedCellValue(row, col, datalog.value);
       return;
     }
 
@@ -92,6 +106,27 @@
 
   window.addEventListener('keydown', (e) => setKeyDown(e, true));
   window.addEventListener('keyup', (e) => setKeyDown(e, false));
+
+  /* automatically select all text in text box upon clicking */
+  const editingCell = useTemplateRef('editingCell');
+  watch([editingCell, lastClick], () => {
+    if (editingCell.value && editingCell.value[0]) {
+      setTimeout(() => editingCell.value[0].select());
+    }
+  });
+
+  const editCellValue = () => {
+    console.log('cell value', editingCellValue.value);
+
+  };
+
+  const handleEscape = ({ key }) => {
+    if (key !== 'Escape') return;
+    editingCellValue.value = '';
+    lastClick.value = -1;
+    selected.value = [];
+  };
+  window.addEventListener('keydown', (e) => handleEscape(e));
 </script>
 
 <style module>
@@ -144,5 +179,12 @@
   .lastSelected {
     padding: 1px;
     border: 2px solid white;
+  }
+
+  .cellInput {
+    all: unset;
+    min-width: 100px;
+    field-sizing: content;
+    cursor: text;
   }
 </style>

@@ -4,7 +4,7 @@
       {{ props.label }}
     </label>
     <div :class="$style.inputWrapper">
-      <input v-model="text" :class="$style.textBox" :id="id" type="text" @change="hanldeChange" :disabled="disabled" />
+      <input v-model="text" :class="$style.textBox" :id="id" type="text" @change="handleChange" :disabled="disabled" />
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@
     emit('change', startValue);
   });
 
-  const hanldeChange = () => {
+  const handleChange = () => {
     emit('change', text.value);
   };
 </script>
