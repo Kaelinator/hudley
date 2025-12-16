@@ -116,6 +116,8 @@
     }
   });
 
+  const isKeyEditable = (populationStrategies, key) => populationStrategies[key] === 'manual';
+
   const editCellValue = () => {
     const udpatedPoints = datalog.value.points.map((point, pointIndex) => {
       const row = selected.value.slice(pointIndex * columnCount.value, pointIndex * columnCount.value + columnCount.value);
@@ -128,7 +130,7 @@
       return Object.entries(point)
         .reduce((result, [key, value], index) => ({
           ...result,
-          [key]: row[index + 1] ? +editingCellValue.value : value,
+          [key]: row[index + 1] && isKeyEditable(datalog.value.populationStrategies, key) ? +editingCellValue.value : value,
         }), {});
     });
 
