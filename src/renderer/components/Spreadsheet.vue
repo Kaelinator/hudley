@@ -2,7 +2,15 @@
   <table v-if="datalog" :class="$style.table">
     <thead>
       <tr :class="$style.headerRow">
-        <th :class="$style.headerCell" v-for="point in ['point', ...Object.keys(datalog.units)]">{{ point }}</th>
+        <th
+          :class="[
+            $style.headerCell,
+            isReadonly(point) && $style.readonly,
+          ]"
+          v-for="point in ['point', ...Object.keys(datalog.units)]"
+        >
+          {{ point }}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -10,10 +18,11 @@
         <td
           :class="[
             $style.cell,
+            isReadonly(key) && $style.readonly,
             selected[row * columnCount + col] && $style.selected,
             (lastClick === row * columnCount + col) && $style.lastSelected,
           ]"
-          v-for="(value, col) in [row, ...Object.values(point)]"
+          v-for="([key, value], col) in [['index', row], ...Object.entries(point)]"
           @click="select(row, col)"
         >
           <input v-if="(lastClick === row * columnCount + col)"
@@ -57,6 +66,11 @@
   const select = (row, col) => {
     const clickedCell = row * columnCount.value + col;
     if (!keyIsDown.value['Control'] && !keyIsDown.value['Shift']) {
+
+      if (col === 0 || isReadonly(Object.keys(datalog.value.units)[col - 1])) {
+        return;
+      }
+
       selected.value = Array(columnCount.value * rowCount.value).fill(false);
       selected.value[clickedCell] = true;
       lastClick.value = clickedCell;
@@ -64,7 +78,7 @@
       return;
     }
 
-    if (keyIsDown.value['Shift']) {
+    if (keyIsDown.value['Shift'] && lastClick.value >= 0) {
       if (!keyIsDown.value['Control']) {
         selected.value = Array(columnCount.value * rowCount.value).fill(false);
       }
@@ -92,6 +106,7 @@
     if (keyIsDown.value['Control']) {
       selected.value[clickedCell] = true;
       lastClick.value = clickedCell;
+      editingCellValue.value = getClickedCellValue(row, col, datalog.value);
       return;
     };
 
@@ -112,11 +127,16 @@
   const editingCell = useTemplateRef('editingCell');
   watch([editingCell, selected], () => {
     if (editingCell.value && editingCell.value[0]) {
-      setTimeout(() => editingCell.value && editingCell.value[0] && editingCell.value[0].select());
+      setTimeout(() => {
+        if (editingCell.value && editingCell.value[0]) {
+          console.log('select')
+          editingCell.value[0].select();
+        }
+      });
     }
   });
 
-  const isKeyEditable = (populationStrategies, key) => populationStrategies[key] === 'manual';
+  const isReadonly = (key) => datalog.value.populationStrategies[key] !== 'manual';
 
   const editCellValue = () => {
     const udpatedPoints = datalog.value.points.map((point, pointIndex) => {
@@ -130,7 +150,7 @@
       return Object.entries(point)
         .reduce((result, [key, value], index) => ({
           ...result,
-          [key]: row[index + 1] && isKeyEditable(datalog.value.populationStrategies, key) ? +editingCellValue.value : value,
+          [key]: row[index + 1] && !isReadonly(key) ? +editingCellValue.value : value,
         }), {});
     });
 
@@ -193,13 +213,13 @@
   }
 
   .selected {
-    background: #444;
-    color: white;
+    background: #BBFFBB;
+    color: black;
   }
 
   .lastSelected {
     padding: 1px;
-    border: 2px solid white;
+    border: 2px solid #44FF44;
   }
 
   .cellInput {
@@ -207,5 +227,9 @@
     min-width: 100px;
     field-sizing: content;
     cursor: text;
+  }
+
+  .readonly {
+    background: #eee;
   }
 </style>
