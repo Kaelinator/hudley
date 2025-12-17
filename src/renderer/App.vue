@@ -59,7 +59,7 @@
           <Canvas :width="canvasWidth" :height="canvasHeight" />
         </div>
         <div id="tab1" :class="$style.spreadsheetWrapper">
-          <Spreadsheet />
+          <Spreadsheet @cellEdit="handleCellEdit"/>
         </div>
       </Tabulator>
     </div>
@@ -251,11 +251,15 @@
       points: datalog.value.points.map((point, pointIndex) => {
         const value = newDataPoint.populationStrategy === 'formulaic'
           ? calculate(newDataPoint.formula, point)
-          : Object.values(point)[index]; // retain existing value
+          : Object.values(point)[index] || 0; // retain existing value
         return objectUtil.replaceAtIndex(point, index, value, newDataPoint.name);
       }),
     };
   }
+
+  const handleCellEdit = (updatedPoints) => {
+    datalog.value.points = updatedPoints;
+  };
 
   const fonts = ref([]);
   provide('fonts', fonts);

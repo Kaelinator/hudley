@@ -2,7 +2,15 @@
   <table v-if="datalog" :class="$style.table">
     <thead>
       <tr :class="$style.headerRow">
-        <th :class="$style.headerCell" v-for="point in ['point', ...Object.keys(datalog.units)]">{{ point }}</th>
+        <th
+          :class="[
+            $style.headerCell,
+            isReadonly(point) && $style.readonly,
+          ]"
+          v-for="point in ['point', ...Object.keys(datalog.units)]"
+        >
+          {{ point }}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -10,13 +18,22 @@
         <td
           :class="[
             $style.cell,
+            isReadonly(key) && $style.readonly,
             selected[row * columnCount + col] && $style.selected,
             (lastClick === row * columnCount + col) && $style.lastSelected,
           ]"
-          v-for="(value, col) in [row, ...Object.values(point)]"
+          v-for="([key, value], col) in [['index', row], ...Object.entries(point)]"
           @click="select(row, col)"
         >
-        {{ value.toFixed(0) }}
+          <input v-if="(lastClick === row * columnCount + col)"
+            type="text"
+            v-model="editingCellValue"
+            @change="editCellValue"
+            ref="editingCell"
+            :disabled="(lastClick !== row * columnCount + col)"
+            :class="$style.cellInput"
+          />
+          <template v-else>{{ formatNumber(value) }}</template>
         </td>
       </tr>
     </tbody>
@@ -24,10 +41,20 @@
 </template>
 
 <script setup>
-  import { inject, ref, watchEffect } from 'vue';
-  // import { defineEmits, defineProps, inject, ref } from 'vue';
+  import { inject, defineEmits, ref, watch, watchEffect, useTemplateRef } from 'vue';
 
   const datalog = inject('datalog');
+  const emit = defineEmits(['cellEdit']);
+
+  const formatNumber = (n) => n.toLocaleString('en-US', 
+    Math.abs(n) < 100
+      ? {
+        maximumSignificantDigits: 3,
+      }
+      : {
+        maximumFractionDigits: 0,
+        useGrouping: false,
+      });
 
   const selected = ref([]); // left to right, top to bottom
   const columnCount = ref(0);
@@ -39,17 +66,29 @@
     selected.value = Array(columnCount.value * rowCount.value).fill(false);
   });
 
+  const getClickedCellValue = (row, col, { points, units }) => {
+    if (col === 0) return row; // easy return index
+    return points[row][Object.keys(units)[col - 1]];
+  };
+
   const lastClick = ref(-1);
+  const editingCellValue = ref(''); // lastClicked or something
   const select = (row, col) => {
     const clickedCell = row * columnCount.value + col;
     if (!keyIsDown.value['Control'] && !keyIsDown.value['Shift']) {
+
+      if (col === 0 || isReadonly(Object.keys(datalog.value.units)[col - 1])) {
+        return;
+      }
+
       selected.value = Array(columnCount.value * rowCount.value).fill(false);
       selected.value[clickedCell] = true;
       lastClick.value = clickedCell;
+      editingCellValue.value = getClickedCellValue(row, col, datalog.value);
       return;
     }
 
-    if (keyIsDown.value['Shift']) {
+    if (keyIsDown.value['Shift'] && lastClick.value >= 0) {
       if (!keyIsDown.value['Control']) {
         selected.value = Array(columnCount.value * rowCount.value).fill(false);
       }
@@ -77,6 +116,7 @@
     if (keyIsDown.value['Control']) {
       selected.value[clickedCell] = true;
       lastClick.value = clickedCell;
+      editingCellValue.value = getClickedCellValue(row, col, datalog.value);
       return;
     };
 
@@ -92,6 +132,50 @@
 
   window.addEventListener('keydown', (e) => setKeyDown(e, true));
   window.addEventListener('keyup', (e) => setKeyDown(e, false));
+
+  /* automatically select all text in text box upon clicking */
+  const editingCell = useTemplateRef('editingCell');
+  const selectText = (cell) => {
+    if (editingCell.value && editingCell.value[0]) {
+      editingCell.value[0].select();
+    }
+  }
+  watch([editingCell, selected, lastClick], () => {
+    setTimeout(() => selectText(editingCell));
+  });
+
+  const isReadonly = (key) => datalog.value.populationStrategies[key] !== 'manual';
+
+  const editCellValue = () => {
+    const udpatedPoints = datalog.value.points.map((point, pointIndex) => {
+      const row = selected.value.slice(pointIndex * columnCount.value, pointIndex * columnCount.value + columnCount.value);
+
+      if (row.every(cellIsSelected => !cellIsSelected)) {
+        // none of the values in this point are in the user's selection
+        return point;
+      }
+
+      return Object.entries(point)
+        .reduce((result, [key, value], index) => ({
+          ...result,
+          [key]: row[index + 1] && !isReadonly(key) ? +editingCellValue.value : value,
+        }), {});
+    });
+
+    emit('cellEdit', udpatedPoints);
+    escape();
+  };
+
+  const escape = () => {
+    editingCellValue.value = '';
+    lastClick.value = -1;
+    selected.value = [];
+  };
+
+  window.addEventListener('keydown', ({ key }) => {
+    if (key !== 'Escape') return;
+    escape();
+  });
 </script>
 
 <style module>
@@ -137,12 +221,23 @@
   }
 
   .selected {
-    background: #444;
-    color: white;
+    background: #BBFFBB;
+    color: black;
   }
 
   .lastSelected {
     padding: 1px;
-    border: 2px solid white;
+    border: 2px solid #44FF44;
+  }
+
+  .cellInput {
+    all: unset;
+    min-width: 100px;
+    field-sizing: content;
+    cursor: text;
+  }
+
+  .readonly {
+    background: #eee;
   }
 </style>
