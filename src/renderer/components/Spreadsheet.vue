@@ -125,15 +125,13 @@
 
   /* automatically select all text in text box upon clicking */
   const editingCell = useTemplateRef('editingCell');
-  watch([editingCell, selected], () => {
+  const selectText = (cell) => {
     if (editingCell.value && editingCell.value[0]) {
-      setTimeout(() => {
-        if (editingCell.value && editingCell.value[0]) {
-          console.log('select')
-          editingCell.value[0].select();
-        }
-      });
+      editingCell.value[0].select();
     }
+  }
+  watch([editingCell, selected, lastClick], () => {
+    setTimeout(() => selectText(editingCell));
   });
 
   const isReadonly = (key) => datalog.value.populationStrategies[key] !== 'manual';
