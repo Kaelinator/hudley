@@ -33,7 +33,7 @@
             :disabled="(lastClick !== row * columnCount + col)"
             :class="$style.cellInput"
           />
-          <template v-else>{{ value.toFixed(0) }}</template>
+          <template v-else>{{ formatNumber(value) }}</template>
         </td>
       </tr>
     </tbody>
@@ -45,6 +45,16 @@
 
   const datalog = inject('datalog');
   const emit = defineEmits(['cellEdit']);
+
+  const formatNumber = (n) => n.toLocaleString('en-US', 
+    Math.abs(n) < 100
+      ? {
+        maximumSignificantDigits: 3,
+      }
+      : {
+        maximumFractionDigits: 0,
+        useGrouping: false,
+      });
 
   const selected = ref([]); // left to right, top to bottom
   const columnCount = ref(0);
