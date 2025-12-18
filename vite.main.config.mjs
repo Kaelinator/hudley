@@ -24,6 +24,24 @@ export default defineConfig({
         search: 'HTMLCanvasElement',
         replace: 'Object',
       },
+      {
+        /* WebMWriter.js doesn't need HTMLCanvasElement cause it's running in node environment */
+        fileName: 'WebMWriter.js',
+        search: 'videoWidth = frame.width',
+        replace: 'videoWidth = options.width || frame.width',
+      },
+      {
+        /* WebMWriter.js doesn't need HTMLCanvasElement cause it's running in node environment */
+        fileName: 'WebMWriter.js',
+        search: 'videoHeight = frame.height',
+        replace: 'videoHeight = options.height || frame.height',
+      },
+      {
+        /* Stupid bug corrupting all the webms that took me hours to fix */
+        fileName: 'BlobBuffer.js',
+        search: 'dataArray.buffer',
+        replace: 'dataArray',
+      },
     ]),
   ],
 });
