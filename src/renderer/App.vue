@@ -192,6 +192,8 @@
       endPoint: endPoint.value,
       framerate: framerate.value,
       renderPath: renderPath.value,
+      width: canvasWidth.value,
+      height: canvasHeight.value,
     };
 
     const { cancel } = canvasUtil.render(context, components.value, datalog.value, options)

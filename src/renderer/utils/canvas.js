@@ -36,7 +36,7 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
 };
 
 export const render = (context, components, datalog, {
-  startPoint, endPoint, framerate, renderPath,
+  startPoint, endPoint, framerate, renderPath, width, height
 }) => {
   let cancelled = false;
   let progressHandler;
@@ -62,6 +62,8 @@ export const render = (context, components, datalog, {
     quality: 0.99999,
     frameRate: framerate,
     transparent: true,
+    width,
+    height,
   }).then(async () => {
     const startTime = Date.now();
     let currentRtc = datalog.points[0].rtc;
