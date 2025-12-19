@@ -6,8 +6,8 @@ export const units = {
   /* pressure */
   PSIA: Symbol.for('pounds per square inch absolute '),
   PSIG: Symbol.for('pounds per square inch guage '),
-  KPA: Symbol.for('kilopascals'), // absolute
-  BAR: Symbol.for('bar'), // absolute
+  KPA: Symbol.for('kilopascals absolute'),
+  BAR: Symbol.for('bar absolute'),
 
   /* flow */
   GPH: Symbol.for('gallons per hour'),
