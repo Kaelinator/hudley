@@ -1,3 +1,5 @@
+import { abbreviations } from '../../shared/units';
+
 const convertAlphaToGrayscaleImage = (context) => {
   const source = context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
   const transparencyMap = source.map((value, i) => {
@@ -22,14 +24,13 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
     context.strokeStyle = component.stroke;
     context.lineWidth = component.strokeWeight;
 
-    const text = `${component.label}${dataPointValues[component.dataPoint].toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? Symbol.keyFor(component.unitOfMeasure) : ''}`;
+    const text = `${component.label}${dataPointValues[component.dataPoint].toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? abbreviations[component.unitOfMeasure] : ''}`;
 
     if (component.strokeWeight > 0) {
       context.strokeText(text, component.x, component.y);
     }
 
     context.fillText(text, component.x, component.y);
-
   });
 
   const frame = context.canvas.toDataURL('image/webp');
