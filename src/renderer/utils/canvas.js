@@ -24,7 +24,12 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
 
     const text = `${component.label}${dataPointValues[component.dataPoint].toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? Symbol.keyFor(component.unitOfMeasure) : ''}`;
 
+    if (component.strokeWeight > 0) {
+      context.strokeText(text, component.x, component.y);
+    }
+
     context.fillText(text, component.x, component.y);
+
   });
 
   const frame = context.canvas.toDataURL('image/webp');
