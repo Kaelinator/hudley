@@ -77,7 +77,7 @@ export default async (datalogPath) => {
         fuelFlow: Symbol.keyFor(units.GLBPH),
         estimatedVE: Symbol.keyFor(units.PERCENT),
         ignitionTiming: Symbol.keyFor(units.DEG),
-        map: Symbol.keyFor(units.PSIA),
+        map: Symbol.keyFor(units.KPA),
         mat: Symbol.keyFor(units.F),
         cts: Symbol.keyFor(units.F),
         battery: Symbol.keyFor(units.V),

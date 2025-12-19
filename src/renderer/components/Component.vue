@@ -18,7 +18,9 @@
       <NumericUpDown @change="y => update({ y })" :startValue="props.y" label="Y:" />
       <NumericUpDown @change="decimalPlaces => update({ decimalPlaces })" :min="0" :startValue="props.decimalPlaces" label="Decimal places:" />
       <Select @change="u => update({ unitOfMeasure: Symbol.for(u) })" label="Unit of measure:" :startValue="Symbol.keyFor(props.unitOfMeasure)">
-        <option v-for="u in Object.values(units)" :value="Symbol.keyFor(u)">{{ Symbol.keyFor(u) }}</option>
+        <option v-for="u in getAvailableUnits(props.unitOfMeasure)" :value="Symbol.keyFor(u)">
+          {{ Symbol.keyFor(u) }}
+        </option>
       </Select>
       <CheckBox @change="showUnitOfMeasure => update({ showUnitOfMeasure })" :startValue="props.showUnitOfMeasure" label="Show unit of measure:" />
       <TextBox @change="label => update({ label })" label="Label:" :startValue="props.label" />
@@ -59,7 +61,7 @@
   import CheckBox from './CheckBox.vue';
   import ColorPicker from './ColorPicker.vue';
 
-  import { units } from '../../shared/units';
+  import { units, conversions } from '../../shared/units';
 
   const props = defineProps({
     editable: { type: Boolean, default: false },
@@ -120,6 +122,13 @@
     emit('update', component.value);
   };
 
+  const getAvailableUnits = (unit) => [
+    unit,
+    ...Object.getOwnPropertySymbols(conversions[unit]),
+  ]
+    .map(s => Symbol.keyFor(s))
+    .sort()
+    .map(k => Symbol.for(k));
 </script>
 
 <style module>

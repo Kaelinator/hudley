@@ -1,4 +1,4 @@
-import { abbreviations } from '../../shared/units';
+import { abbreviations, conversions } from '../../shared/units';
 
 const convertAlphaToGrayscaleImage = (context) => {
   const source = context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
@@ -24,7 +24,15 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
     context.strokeStyle = component.stroke;
     context.lineWidth = component.strokeWeight;
 
-    const text = `${component.label}${dataPointValues[component.dataPoint].toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? abbreviations[component.unitOfMeasure] : ''}`;
+    const fromUnit = dataPointUnits[component.dataPoint];
+    const toUnit = component.unitOfMeasure;
+
+    const value = (fromUnit !== toUnit)
+      ? conversions[fromUnit][toUnit](dataPointValues[component.dataPoint])
+      : dataPointValues[component.dataPoint];
+
+    const text = `${component.label}${value.toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? abbreviations[component.unitOfMeasure] : ''}`;
+
 
     if (component.strokeWeight > 0) {
       context.strokeText(text, component.x, component.y);
