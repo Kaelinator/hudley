@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.wrapper">
+  <div :class="[$style.wrapper, tab === 'canvas' && $style.withRightBar]">
     <div :class="$style.bar">
       <CollapsibleSection title="Project Settings">
         <div :class="$style.projectSettingsForm">
@@ -51,20 +51,20 @@
 
     <div :class="$style.content">
       <div :class="$style.tabChangeWrapper">
-        <button :class="[$style.tabChangeButton, tab === 'tab0' && $style.current]" @click="changeTab('tab0')"><BsEasel /></button>
-        <button :class="[$style.tabChangeButton, tab === 'tab1' && $style.current]" @click="changeTab('tab1')"><ImTable /></button>
+        <button :class="[$style.tabChangeButton, tab === 'canvas' && $style.current]" @click="changeTab('canvas')"><BsEasel /></button>
+        <button :class="[$style.tabChangeButton, tab === 'sheet' && $style.current]" @click="changeTab('sheet')"><ImTable /></button>
       </div>
       <Tabulator tabKey="main-content-tab-id">
-        <div id="tab0" :class="$style.canvasWrapper">
+        <div id="canvas" :class="$style.canvasWrapper">
           <Canvas :width="canvasWidth" :height="canvasHeight" />
         </div>
-        <div id="tab1" :class="$style.spreadsheetWrapper">
+        <div id="sheet" :class="$style.spreadsheetWrapper">
           <Spreadsheet @cellEdit="handleCellEdit"/>
         </div>
       </Tabulator>
     </div>
 
-    <div :class="$style.bar">
+    <div :class="$style.bar" v-if="tab === 'canvas'">
       <CollapsibleSection title="Components" v-if="datalog">
         <div :class="$style.dataPointList">
           <Component v-for="(component, index) in components"
@@ -103,7 +103,7 @@
   import * as canvasUtil from './utils/canvas';
   import * as objectUtil from './utils/object';
 
-  const tab = ref('tab0');
+  const tab = ref('canvas');
   provide('main-content-tab-id', tab);
   const changeTab = (tabName) => {
     tab.value = tabName;
@@ -306,8 +306,12 @@
 <style module>
   .wrapper {
     display: grid;
-    grid-template-columns: 300px auto 300px;
+    grid-template-columns: 300px auto;
     height: 100vh;
+  }
+
+  .withRightBar {
+    grid-template-columns: 300px auto 300px;
   }
 
   .bar {
