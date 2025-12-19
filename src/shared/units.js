@@ -163,6 +163,11 @@ export const conversions = {
     [GLBPH]: q => q * 1.60432,
   },
 
+  [GLBPH]: {
+    [GPH]: q => q * 0.164663,
+    [LPH]: q => q * 0.623318,
+  },
+
   [MS]: {
     [S]: t => t * 0.001,
     [H]: t => t * 2.777778E-7,
