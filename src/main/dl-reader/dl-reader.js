@@ -41,13 +41,16 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     fuelFlow: buffer.readFloatLE(0x90),
     estimatedVE: buffer.readFloatLE(0xB0),
     ignitionTiming: buffer.readFloatLE(0xD0),
+    targetIdleSpeed: buffer.readFloatLE(0xF8),
+    map: buffer.readFloatLE(0x100),
     map: buffer.readFloatLE(0x100),
     mat: buffer.readFloatLE(0x110),
     cts: buffer.readFloatLE(0x118),
+    baro: buffer.readFloatLE(0x120),
     battery: buffer.readFloatLE(0x128),
     oilPressure: buffer.readFloatLE(0x130),
     fuelPressure: buffer.readFloatLE(0x138),
-    tps: buffer.readFloatLE(0x1d8),
+    tps: buffer.readFloatLE(0x1D8),
   };
 };
 

@@ -10,6 +10,7 @@ test('reads small datalog', async () => {
     injPW: 2.2092931270599365,
     dutyCycle: 1.710303783416748,
     targetAFR: 13.852396011352539,
+    targetIdleSpeed: 984.3101806640625,
     cts: 126.27592468261719,
     fuelFlow: 8.122174263000488,
     fuelPressure: 102.6419677734375,
@@ -22,10 +23,12 @@ test('reads small datalog', async () => {
     oilPressure: 74.45286560058594,
     tps: 0.18066267669200897,
     rtc: 219295876,
+    baro: 102.92281341552734,
   });
   expect(data.points.length).toBe(165);
   expect(data.points[10]).toEqual({
     afr: 15.417254447937012,
+    baro: 102.91476440429688,
     battery: 14.336996078491211,
     cts: 126.26073455810547,
     dutyCycle: 1.5084517002105713,
@@ -39,11 +42,13 @@ test('reads small datalog', async () => {
     oilPressure: 72.69757843017578,
     rpm: 1216.692626953125,
     targetAFR: 13.807195663452148,
+    targetIdleSpeed: 984.34814453125,
     tps: 0.14862030744552612,
     rtc: 219296076,
   });
   expect(data.points[100]).toEqual({
     afr: 11.580077171325684,
+    baro: 102.85631561279297,
     battery: 14.030661582946777,
     cts: 125.99375915527344,
     dutyCycle: 1.68954598903656,
@@ -57,11 +62,13 @@ test('reads small datalog', async () => {
     oilPressure: 71.85884857177734,
     rpm: 1145.6617431640625,
     targetAFR: 13.799999237060547,
+    targetIdleSpeed: 985.015625,
     tps: 1.1090257167816162,
     rtc: 219297876,
   });
   expect(data.points[163]).toEqual({
     afr: 12.163944244384766,
+    baro: 102.9437484741211,
     battery: 13.874848365783691,
     cts: 125.70072174072266,
     dutyCycle: 1.1940630674362183,
@@ -75,6 +82,7 @@ test('reads small datalog', async () => {
     oilPressure: 69.73184204101562,
     rpm: 1041.2421875,
     targetAFR: 13.799999237060547,
+    targetIdleSpeed: 985.7481689453125,
     tps: 0.44691383838653564,
     rtc: 219299136,
   });
@@ -86,6 +94,7 @@ test('reads medium datalog', async () => {
   expect(data.tuneFileName).toBe('HELLCAT.terx');
   expect(data.points[0]).toEqual({
     afr: 11.992986679077148,
+    baro: 103.08258819580078,
     battery: 14.10081672668457,
     cts: 202.64935302734375,
     dutyCycle: 1.0028914213180542,
@@ -99,12 +108,14 @@ test('reads medium datalog', async () => {
     oilPressure: 59.5507926940918,
     rpm: 1374.3946533203125,
     targetAFR: 13.843148231506348,
+    targetIdleSpeed: 850,
     tps: 0.0025552622973918915,
     rtc: 195465854,
   });
   expect(data.points.length).toBe(3791);
   expect(data.points[1316]).toEqual({
     afr: 12.544939041137695,
+    baro: 102.89029693603516,
     battery: 14.299999237060547,
     cts: 203.2503662109375,
     dutyCycle: 64.91338348388672,
@@ -118,11 +129,13 @@ test('reads medium datalog', async () => {
     oilPressure: 77.22880554199219,
     rpm: 4733.0439453125,
     targetAFR: 12.5,
+    targetIdleSpeed: 850,
     tps: 47.709190368652344,
     rtc: 195539194,
   });
   expect(data.points[3789]).toEqual({
     afr: 13.404864311218262,
+    baro: 103.10332489013672,
     battery: 14.085683822631836,
     cts: 203.5010223388672,
     dutyCycle: 3.7507967948913574,
@@ -136,6 +149,7 @@ test('reads medium datalog', async () => {
     oilPressure: 62.87053680419922,
     rpm: 1602.9656982421875,
     targetAFR: 13.638270378112793,
+    targetIdleSpeed: 850,
     tps: 6.593242645263672,
     rtc: 195676814,
   });
