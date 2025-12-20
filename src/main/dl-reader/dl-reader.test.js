@@ -11,6 +11,7 @@ test('reads small datalog', async () => {
     airTempEnr: 102.29647827148438,
     baro: 102.92281341552734,
     battery: 13.926725387573242,
+    cLComp: 1.549361228942871,
     cLStatus: 1,
     coolantEnr: 108.43183898925781,
     cts: 126.27592468261719,
@@ -33,7 +34,8 @@ test('reads small datalog', async () => {
     rtc: 219295876,
     targetAFR: 13.852396011352539,
     targetIdleSpeed: 984.3101806640625,
-    tps: 0.18066267669200897,
+    targetLambda: 0.9423398971557617,
+    tps: 0.18319116532802582,
     tpsROC: 0,
   });
   expect(data.points.length).toBe(165);
@@ -43,6 +45,7 @@ test('reads small datalog', async () => {
     airTempEnr: 102.30384063720703,
     baro: 102.91476440429688,
     battery: 14.336996078491211,
+    cLComp: 3.582005500793457,
     cLStatus: 1,
     coolantEnr: 108.434814453125,
     cts: 126.26073455810547,
@@ -65,7 +68,8 @@ test('reads small datalog', async () => {
     rtc: 219296076,
     targetAFR: 13.807195663452148,
     targetIdleSpeed: 984.34814453125,
-    tps: 0.14862030744552612,
+    targetLambda: 0.9392650127410889,
+    tps: 0.15979331731796265,
     tpsROC: 0,
   });
   expect(data.points[100]).toEqual({
@@ -74,6 +78,7 @@ test('reads small datalog', async () => {
     airTempEnr: 102.3572006225586,
     baro: 102.85631561279297,
     battery: 14.030661582946777,
+    cLComp: -0.2314765453338623,
     cLStatus: 1,
     coolantEnr: 108.50102996826172,
     cts: 125.99375915527344,
@@ -96,7 +101,8 @@ test('reads small datalog', async () => {
     rtc: 219297876,
     targetAFR: 13.799999237060547,
     targetIdleSpeed: 985.015625,
-    tps: 1.1090257167816162,
+    targetLambda: 0.9387754797935486,
+    tps: 1.1150970458984375,
     tpsROC: 0,
   });
   expect(data.points[163]).toEqual({
@@ -105,6 +111,7 @@ test('reads small datalog', async () => {
     airTempEnr: 102.41293334960938,
     baro: 102.9437484741211,
     battery: 13.874848365783691,
+    cLComp: -6.935264587402344,
     cLStatus: 1,
     coolantEnr: 108.57482147216797,
     cts: 125.70072174072266,
@@ -127,7 +134,8 @@ test('reads small datalog', async () => {
     rtc: 219299136,
     targetAFR: 13.799999237060547,
     targetIdleSpeed: 985.7481689453125,
-    tps: 0.44691383838653564,
+    targetLambda: 0.9387754797935486,
+    tps: 0.4452384412288666,
     tpsROC: 0,
   });
 });
@@ -142,6 +150,7 @@ test('reads medium datalog', async () => {
     airTempEnr: 102.79972076416016,
     baro: 103.08258819580078,
     battery: 14.10081672668457,
+    cLComp: 0,
     cLStatus: 0,
     coolantEnr: 100,
     cts: 202.64935302734375,
@@ -164,7 +173,8 @@ test('reads medium datalog', async () => {
     rtc: 195465854,
     targetAFR: 13.843148231506348,
     targetIdleSpeed: 850,
-    tps: 0.0025552622973918915,
+    targetLambda: 0.9417107701301575,
+    tps: 0,
     tpsROC: 0,
   });
   expect(data.points.length).toBe(3791);
@@ -175,6 +185,7 @@ test('reads medium datalog', async () => {
     baro: 102.89029693603516,
     battery: 14.299999237060547,
     cLStatus: 1,
+    cLComp: -1.5619462728500366,
     coolantEnr: 100,
     cts: 203.2503662109375,
     currentLearn: -0.5358229279518127,
@@ -196,7 +207,8 @@ test('reads medium datalog', async () => {
     rtc: 195539194,
     targetAFR: 12.5,
     targetIdleSpeed: 850,
-    tps: 47.709190368652344,
+    targetLambda: 0.8503401279449463,
+    tps: 47.8206901550293,
     tpsROC: 0,
   });
   expect(data.points[3789]).toEqual({
@@ -205,6 +217,7 @@ test('reads medium datalog', async () => {
     airTempEnr: 102.82559204101562,
     baro: 103.10332489013672,
     battery: 14.085683822631836,
+    cLComp: 9.784451484680176,
     cLStatus: 1,
     coolantEnr: 100,
     cts: 203.5010223388672,
@@ -227,7 +240,8 @@ test('reads medium datalog', async () => {
     rtc: 195676814,
     targetAFR: 13.638270378112793,
     targetIdleSpeed: 850,
-    tps: 6.593242645263672,
+    targetLambda: 0.9277735352516174,
+    tps: 6.595186710357666,
     tpsROC: 0,
   });
 });

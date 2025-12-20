@@ -36,7 +36,9 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     rpm: buffer.readFloatLE(0x10),
     injPW: buffer.readFloatLE(0x18),
     dutyCycle: buffer.readFloatLE(0x20),
+    cLComp: buffer.readFloatLE(0x28),
     targetAFR: buffer.readFloatLE(0x30),
+    targetLambda: buffer.readFloatLE(0x38),
     afr: buffer.readFloatLE(0x40),
     lambda: buffer.readFloatLE(0x48),
     airTempEnr: buffer.readFloatLE(0x50),
@@ -53,7 +55,7 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     iacPosition: buffer.readFloatLE(0xF0),
     targetIdleSpeed: buffer.readFloatLE(0xF8),
     map: buffer.readFloatLE(0x100),
-    map: buffer.readFloatLE(0x100),
+    tps: buffer.readFloatLE(0x108),
     mat: buffer.readFloatLE(0x110),
     cts: buffer.readFloatLE(0x118),
     baro: buffer.readFloatLE(0x120),
@@ -61,7 +63,6 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     oilPressure: buffer.readFloatLE(0x130),
     fuelPressure: buffer.readFloatLE(0x138),
     pedalPosition: buffer.readFloatLE(0x140),
-    tps: buffer.readFloatLE(0x1D8),
   };
 };
 
