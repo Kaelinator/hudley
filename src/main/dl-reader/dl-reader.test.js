@@ -7,8 +7,11 @@ test('reads small datalog', async () => {
   expect(data.tuneFileName).toBe('HELLCAT.terx');
   expect(data.points[0]).toEqual({
     afr: 14.845837593078613,
+    afterstartEnr: 125.87004089355469,
+    airTempEnr: 102.29647827148438,
     baro: 102.92281341552734,
     battery: 13.926725387573242,
+    coolantEnr: 108.43183898925781,
     cts: 126.27592468261719,
     currentLearn: -28.776464462280273,
     dutyCycle: 1.710303783416748,
@@ -30,8 +33,11 @@ test('reads small datalog', async () => {
   expect(data.points.length).toBe(165);
   expect(data.points[10]).toEqual({
     afr: 15.417254447937012,
+    afterstartEnr: 125.19358825683594,
+    airTempEnr: 102.30384063720703,
     baro: 102.91476440429688,
     battery: 14.336996078491211,
+    coolantEnr: 108.434814453125,
     cts: 126.26073455810547,
     currentLearn: -28.154457092285156,
     dutyCycle: 1.5084517002105713,
@@ -52,8 +58,11 @@ test('reads small datalog', async () => {
   });
   expect(data.points[100]).toEqual({
     afr: 11.580077171325684,
+    afterstartEnr: 119.12324523925781,
+    airTempEnr: 102.3572006225586,
     baro: 102.85631561279297,
     battery: 14.030661582946777,
+    coolantEnr: 108.50102996826172,
     cts: 125.99375915527344,
     currentLearn: -28.017152786254883,
     dutyCycle: 1.68954598903656,
@@ -74,8 +83,11 @@ test('reads small datalog', async () => {
   });
   expect(data.points[163]).toEqual({
     afr: 12.163944244384766,
+    afterstartEnr: 114.87916564941406,
+    airTempEnr: 102.41293334960938,
     baro: 102.9437484741211,
     battery: 13.874848365783691,
+    coolantEnr: 108.57482147216797,
     cts: 125.70072174072266,
     currentLearn: -27.968887329101562,
     dutyCycle: 1.1940630674362183,
@@ -102,8 +114,11 @@ test('reads medium datalog', async () => {
   expect(data.tuneFileName).toBe('HELLCAT.terx');
   expect(data.points[0]).toEqual({
     afr: 11.992986679077148,
+    afterstartEnr: 100,
+    airTempEnr: 102.79972076416016,
     baro: 103.08258819580078,
     battery: 14.10081672668457,
+    coolantEnr: 100,
     cts: 202.64935302734375,
     currentLearn: -30.10417366027832,
     dutyCycle: 1.0028914213180542,
@@ -125,8 +140,11 @@ test('reads medium datalog', async () => {
   expect(data.points.length).toBe(3791);
   expect(data.points[1316]).toEqual({
     afr: 12.544939041137695,
+    afterstartEnr: 100,
+    airTempEnr: 102.7638931274414,
     baro: 102.89029693603516,
     battery: 14.299999237060547,
+    coolantEnr: 100,
     cts: 203.2503662109375,
     currentLearn: -0.5358229279518127,
     dutyCycle: 64.91338348388672,
@@ -147,8 +165,11 @@ test('reads medium datalog', async () => {
   });
   expect(data.points[3789]).toEqual({
     afr: 13.404864311218262,
+    afterstartEnr: 100,
+    airTempEnr: 102.82559204101562,
     baro: 103.10332489013672,
     battery: 14.085683822631836,
+    coolantEnr: 100,
     cts: 203.5010223388672,
     currentLearn: -20.293493270874023,
     dutyCycle: 3.7507967948913574,
