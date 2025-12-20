@@ -38,6 +38,8 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     dutyCycle: buffer.readFloatLE(0x20),
     targetAFR: buffer.readFloatLE(0x30),
     afr: buffer.readFloatLE(0x40),
+    lambda: buffer.readFloatLE(0x48),
+    currentLearn: buffer.readFloatLE(0x70),
     fuelFlow: buffer.readFloatLE(0x90),
     estimatedVE: buffer.readFloatLE(0xB0),
     ignitionTiming: buffer.readFloatLE(0xD0),
