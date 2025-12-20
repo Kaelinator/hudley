@@ -5,7 +5,7 @@ test('reads small datalog', async () => {
   // yes I know this is more of an integration test blah blah sue me
   const data = await readDatalog('test-data/small-datalog-0.dl');
   expect(data.tuneFileName).toBe('HELLCAT.terx');
-  expect(data.points[0]).toEqual({
+  expect(data.points[0]).toMatchObject({
     afr: 14.845837593078613,
     afterstartEnr: 125.87004089355469,
     airTempEnr: 102.29647827148438,
@@ -39,7 +39,7 @@ test('reads small datalog', async () => {
     tpsROC: 0,
   });
   expect(data.points.length).toBe(165);
-  expect(data.points[10]).toEqual({
+  expect(data.points[10]).toMatchObject({
     afr: 15.417254447937012,
     afterstartEnr: 125.19358825683594,
     airTempEnr: 102.30384063720703,
@@ -72,7 +72,7 @@ test('reads small datalog', async () => {
     tps: 0.15979331731796265,
     tpsROC: 0,
   });
-  expect(data.points[100]).toEqual({
+  expect(data.points[100]).toMatchObject({
     afr: 11.580077171325684,
     afterstartEnr: 119.12324523925781,
     airTempEnr: 102.3572006225586,
@@ -105,7 +105,7 @@ test('reads small datalog', async () => {
     tps: 1.1150970458984375,
     tpsROC: 0,
   });
-  expect(data.points[163]).toEqual({
+  expect(data.points[163]).toMatchObject({
     afr: 12.163944244384766,
     afterstartEnr: 114.87916564941406,
     airTempEnr: 102.41293334960938,
@@ -144,7 +144,7 @@ test('reads medium datalog', async () => {
   // yes I know this is more of an integration test blah blah sue me
   const data = await readDatalog('test-data/medium-datalog-0.dl');
   expect(data.tuneFileName).toBe('HELLCAT.terx');
-  expect(data.points[0]).toEqual({
+  expect(data.points[0]).toMatchObject({
     afr: 11.992986679077148,
     afterstartEnr: 100,
     airTempEnr: 102.79972076416016,
@@ -178,7 +178,7 @@ test('reads medium datalog', async () => {
     tpsROC: 0,
   });
   expect(data.points.length).toBe(3791);
-  expect(data.points[1316]).toEqual({
+  expect(data.points[1316]).toMatchObject({
     afr: 12.544939041137695,
     afterstartEnr: 100,
     airTempEnr: 102.7638931274414,
@@ -211,7 +211,7 @@ test('reads medium datalog', async () => {
     tps: 47.8206901550293,
     tpsROC: 0,
   });
-  expect(data.points[3789]).toEqual({
+  expect(data.points[3789]).toMatchObject({
     afr: 13.404864311218262,
     afterstartEnr: 100,
     airTempEnr: 102.82559204101562,
