@@ -43,6 +43,8 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     coolantEnr: buffer.readFloatLE(0x58),
     afterstartEnr: buffer.readFloatLE(0x68),
     currentLearn: buffer.readFloatLE(0x70),
+    cLStatus: buffer.readFloatLE(0x78),
+    learnStatus: buffer.readFloatLE(0x80),
     fuelFlow: buffer.readFloatLE(0x90),
     estimatedVE: buffer.readFloatLE(0xB0),
     ignitionTiming: buffer.readFloatLE(0xD0),
