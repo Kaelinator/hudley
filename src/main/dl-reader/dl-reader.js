@@ -46,6 +46,7 @@ const getDataPoint = ({ bytesRead, buffer }) => {
     cts: buffer.readFloatLE(0x118),
     battery: buffer.readFloatLE(0x128),
     oilPressure: buffer.readFloatLE(0x130),
+    fuelPressure: buffer.readFloatLE(0x138),
     tps: buffer.readFloatLE(0x1d8),
   };
 };
