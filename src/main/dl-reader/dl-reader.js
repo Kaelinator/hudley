@@ -97,17 +97,42 @@ export default async (datalogPath) => {
         rpm: Symbol.keyFor(units.RPM),
         injPW: Symbol.keyFor(units.MS),
         dutyCycle: Symbol.keyFor(units.PERCENT),
+        cLComp: Symbol.keyFor(units.PERCENT),
         targetAFR: Symbol.keyFor(units.TO1),
+        targetLambda: Symbol.keyFor(units.TO1),
         afr: Symbol.keyFor(units.TO1),
+        lambda: Symbol.keyFor(units.TO1),
+        airTempEnr: Symbol.keyFor(units.PERCENT),
+        coolantEnr: Symbol.keyFor(units.PERCENT),
+        coolantAFROffset: Symbol.keyFor(units.TO1),
+        afterstartEnr: Symbol.keyFor(units.PERCENT),
+        currentLearn: Symbol.keyFor(units.PERCENT),
+        cLStatus: Symbol.keyFor(units.DIMENSIONLESS),
+        learnStatus: Symbol.keyFor(units.DIMENSIONLESS),
+        fuelEconomy: Symbol.keyFor(units.DIMENSIONLESS), // no idea
         fuelFlow: Symbol.keyFor(units.GLBPH),
+        mapROC: Symbol.keyFor(units.KPA), // per second or per 10 seconds
+        tpsROC: Symbol.keyFor(units.PERCENT), // per second
+        tuningChange: Symbol.keyFor(units.DIMENSIONLESS), // no idea
         estimatedVE: Symbol.keyFor(units.PERCENT),
+        mainRevLimit: Symbol.keyFor(units.DIMENSIONLESS),
+        revLimit1: Symbol.keyFor(units.DIMENSIONLESS), // no idea
+        launchRetard: Symbol.keyFor(units.DIMENSIONLESS), // no idea,
         ignitionTiming: Symbol.keyFor(units.DEG),
+        knockRetard: Symbol.keyFor(units.DEG),
+        knockLevel: Symbol.keyFor(units.PERCENT),
+        sparkPad2: Symbol.keyFor(units.DIMENSIONLESS), // no idea
+        iacPosition: Symbol.keyFor(units.PERCENT),
+        targetIdleSpeed: Symbol.keyFor(units.RPM),
         map: Symbol.keyFor(units.KPA),
+        tps: Symbol.keyFor(units.PERCENT),
         mat: Symbol.keyFor(units.F),
         cts: Symbol.keyFor(units.F),
+        baro: Symbol.keyFor(units.KPA),
         battery: Symbol.keyFor(units.V),
         oilPressure: Symbol.keyFor(units.PSIG),
-        tps: Symbol.keyFor(units.PERCENT),
+        fuelPressure: Symbol.keyFor(units.PSIG),
+        pedalPosition: Symbol.keyFor(units.PERCENT),
       },
 
       points: await Promise.all(
