@@ -80,7 +80,7 @@ export const render = (context, components, datalog, {
     height,
   }).then(async () => {
     const startTime = Date.now();
-    let currentRtc = datalog.points[0].rtc;
+    let currentRtc = datalog.points[startPoint].rtc;
     const stepDuration = 1000 / framerate; // ms between frames
 
     /* eslint-disable no-await-in-loop */
