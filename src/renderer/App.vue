@@ -19,7 +19,7 @@
           <NumericUpDown @change="w => canvasWidth = w" :min="0" :startValue="canvasWidth" label="Canvas width:" />
           <NumericUpDown @change="h => canvasHeight = h" :min="0" :startValue="canvasHeight" label="Canvas height:" />
           <FilePicker @change="setRenderPath" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
-          <Button v-if="!renderInProgress" @click="render" :disabled="!datalog">Render</Button>
+          <Button v-if="!renderInProgress" @click="render" :disabled="!datalog || !renderPath">Render</Button>
           <ProgressBar v-else :progress="progress.progress" @cancel="cancelRender" cancellable>
             Rendering: {{ (progress.progress * 100).toFixed(0) }}%
             {{ new Date(progress.elapsedTime).toISOString().substring(11, 19) }}
