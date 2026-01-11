@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest';
 import {
-  parse, infixToTree, types, evaluate, calculate,
+  parse, infixToTree, types, evaluate, calculate, assertValidExpression, ExpressionError
 } from './formula';
 
 describe('parse', () => {
@@ -210,6 +210,28 @@ describe('infixToTree', () => {
       { type: types.IDENTIFIER, value: 'e' },
     ])).toEqual([
       { type: types.IDENTIFIER, value: 'e' },
+    ]);
+  });
+
+  test('converts single number and single operator', () => {
+    expect(infixToTree([
+      { type: types.NUMBER, value: 5 },
+      { type: types.OPERATOR, value: '*' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '*' },
+      { type: types.NUMBER, value: 5 },
+      null,
+    ]);
+  });
+
+  test('converts negative identifier', () => {
+    expect(infixToTree([
+      { type: types.OPERATOR, value: '-' },
+      { type: types.IDENTIFIER, value: 'a' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '-' },
+      { type: types.NOOP },
+      { type: types.IDENTIFIER, value: 'a' },
     ]);
   });
 
@@ -549,6 +571,25 @@ describe('infixToTree', () => {
       null, null,
     ]);
   });
+
+  test('converts operator weirdness', () => {
+    expect(infixToTree([
+      { type: types.OPERATOR, value: '*' },
+      { type: types.OPERATOR, value: '/' },
+      { type: types.OPERATOR, value: '+' },
+      { type: types.OPERATOR, value: '-' },
+    ])).toEqual([
+      { type: types.OPERATOR, value: '-' },
+      { type: types.OPERATOR, value: '+' },
+      null,
+      { type: types.OPERATOR, value: '/' },
+      null, null, null,
+      { type: types.OPERATOR, value: '*' },
+      null, null, null, null, null, null, null,
+      { type: types.NOOP },
+      null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+    ]);
+  });
 });
 
 describe('evaluate', () => {
@@ -578,8 +619,8 @@ describe('evaluate', () => {
   test('computes negative', () => {
     const tree = [
       { type: types.OPERATOR, value: '-' },
-      { type: types.NUMBER, value: 1 },
       null,
+      { type: types.NUMBER, value: 1 },
     ];
     expect(evaluate(tree, {})).toBe(-1);
   });
@@ -740,6 +781,19 @@ describe('evaluate', () => {
 });
 
 describe('calculate', () => {
+  test('calculates simple expressions', () => {
+    expect(calculate('a', { a: 3 })).toBeCloseTo(3);
+    expect(calculate('-a', { a: 3 })).toBeCloseTo(-3);
+  });
+
+  test('calculates tricky expressions', () => {
+    expect(calculate('((((-a))))', { a: 3 })).toBeCloseTo(-3);
+    expect(calculate('a(b+c)', { a: 3, b: 4, c: 5 })).toBeCloseTo(27);
+    expect(calculate('(a+b)(b+c)', { a: 3, b: 4, c: 5 })).toBeCloseTo(63);
+    expect(calculate('(a+b)(b+c', { a: 3, b: 4, c: 5 })).toBeCloseTo(63);
+    expect(calculate('a(b(c+a', { a: 3, b: 4, c: 5 })).toBeCloseTo(96);
+  });
+
   test('calculates pythagorean theorem', () => {
     expect(calculate('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).toBeCloseTo(5);
   });
@@ -758,5 +812,45 @@ describe('calculate', () => {
     expect(calculate('G * m0 * m1 / (r^2)', {
       G: 6.6743E-11, m0: 5.6834E26, m1: 1, r: 5.8232E7,
     })).toBeCloseTo(11.18640, 4);
+  });
+});
+
+describe('assertValidExpression', () => {
+  test('throws for missing identifiers', () => {
+    expect(() => assertValidExpression('a', {})).toThrowError(new ExpressionError('Unknown identifier: \'a\''));
+    expect(() => assertValidExpression('a+b', { a: 10 })).toThrowError(new ExpressionError('Unknown identifier: \'b\''));
+  });
+
+  test('throws for invalid decimal points', () => {
+    expect(() => assertValidExpression('1.1.', {})).toThrowError(new ExpressionError('Couldn\'t parse token: \'1.1.\' is not a number'));
+    expect(() => assertValidExpression('.1.', {})).toThrowError(new ExpressionError('Couldn\'t parse token: \'.1.\' is not a number'));
+    expect(() => assertValidExpression('..1', {})).toThrowError(new ExpressionError('Couldn\'t parse token: \'..1\' is not a number'));
+    expect(() => assertValidExpression('..', {})).toThrowError(new ExpressionError('Couldn\'t parse token: \'..\' is not a number'));
+    expect(() => assertValidExpression('.', {})).toThrowError(new ExpressionError('Couldn\'t parse token: \'.\' is not a number'));
+  });
+
+  test('throws for invalid operators', () => {
+    expect(() => assertValidExpression('*', {})).toThrowError(new ExpressionError('Operator \'*\' has no left operand'));
+    expect(() => assertValidExpression('**', {})).toThrowError(new ExpressionError('Operator \'*\' has no right operand'));
+    expect(() => assertValidExpression('^*/+-', {})).toThrowError(new ExpressionError('Operator \'-\' has no right operand'));
+    expect(() => assertValidExpression('-+/*^', {})).toThrowError(new ExpressionError('Operator \'-\' has no right operand'));
+    expect(() => assertValidExpression('^*/+', {})).toThrowError(new ExpressionError('Operator \'+\' has no right operand'));
+    expect(() => assertValidExpression('+/*^', {})).toThrowError(new ExpressionError('Operator \'+\' has no left operand'));
+    expect(() => assertValidExpression('1*', {})).toThrowError(new ExpressionError('Operator \'*\' has no right operand'));
+    expect(() => assertValidExpression('1*(^*/+-)', {})).toThrowError(new ExpressionError('Operator \'-\' has no right operand'));
+    expect(() => assertValidExpression('1-', {})).toThrowError(new ExpressionError('Operator \'-\' has no right operand'));
+  });
+
+  test('doesn\'t throw when expression is valid', () => {
+    expect(() => assertValidExpression('a', { a: 3 })).not.toThrowError();
+    expect(() => assertValidExpression('-a', { a: 3 })).not.toThrowError();
+    expect(() => assertValidExpression('((((-a))))', { a: 3 })).not.toThrowError();
+    expect(() => assertValidExpression('a(b+c)', { a: 3, b: 4, c: 5 })).not.toThrowError();
+    expect(() => assertValidExpression('(a+b)(b+c)', { a: 3, b: 4, c: 5 })).not.toThrowError();
+    expect(() => assertValidExpression('(a+b)(b+c', { a: 3, b: 4, c: 5 })).not.toThrowError();
+    expect(() => assertValidExpression('a(b(c+a', { a: 3, b: 4, c: 5 })).not.toThrowError();
+    expect(() => assertValidExpression('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).not.toThrowError();
+    expect(() => assertValidExpression('(-b+(b^2-4*a*c)^(1/2))/(2*a)', { a: 5, b: 13, c: 7 })).not.toThrowError();
+    expect(() => assertValidExpression('G * m0 * m1 / (r^2)', { G: 0, m0: 0, m1: 0, r: 1 })).not.toThrowError();
   });
 });

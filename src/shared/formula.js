@@ -1,6 +1,12 @@
 import {
-  getParent, getParentIndex, insertParent, getRightChildIndex, getLeftSubTree, getRightSubTree,
+  getParent, getParentIndex, insertParent, getLeftChildIndex, getRightChildIndex, getLeftSubTree, getRightSubTree,
 } from './tree';
+
+export class ExpressionError extends Error {
+  constructor(message = '', ...args) {
+    super(message, ...args);
+  }
+}
 
 /*
  *  Allowed characters: a-z, A-Z, 0-9, +, -, /, *, ^, (, )
@@ -88,7 +94,7 @@ export const parse = (formula) => {
     : token;
 
   if (type === NUMBER && Number.isNaN(value)) {
-    throw Error(`Error parsing token: '${token}' is not a number`);
+    throw new ExpressionError(`Couldn't parse token: '${token}' is not a number`);
   }
 
   return [
@@ -185,7 +191,7 @@ export const evaluate = (tree, values) => {
         return left + right;
 
       case '-':
-        if (right === null) return -left;
+        if (left === null) return -right;
         return left - right;
 
       case '*':
@@ -197,7 +203,7 @@ export const evaluate = (tree, values) => {
       case '^':
         return left ** right;
 
-      default: throw new Error(`Invalid operator: ${node.value}`);
+      default: throw new ExpressionError(`Invalid operator: ${node.value}`);
     }
   }
 
@@ -212,7 +218,51 @@ export const evaluate = (tree, values) => {
     return null;
   }
 
-  throw new Error(`Invalid node type: ${node.type}`);
+  throw new ExpressionError(`Invalid node type: ${node.type}`);
 };
 
 export const calculate = (expression, values) => evaluate(infixToTree(parse(expression)), values);
+
+const assertOperatorsHaveChildren = (expression, index) => {
+  const leftChildIndex = getLeftChildIndex(index);
+  const rightChildIndex = getRightChildIndex(index);
+
+  if (index >= expression.length || !expression[index]) return;
+
+  if (expression[index].type === PARENTHESIS) {
+    // this is probably wrong? idk haven't given it much thought
+    assertOperatorsHaveChildren(expression, leftChildIndex);
+    assertOperatorsHaveChildren(expression, rightChildIndex);
+  }
+
+  if (expression[index].type !== OPERATOR) return;
+
+  const leftChild = expression[leftChildIndex];
+  if (leftChildIndex >= expression.length
+    || ((!leftChild || leftChild.type === NOOP) && expression[index].value !== '-')) {
+    throw new ExpressionError(`Operator '${expression[index].value}' has no left operand`);
+  }
+
+  const rightChild = expression[rightChildIndex];
+  if (rightChildIndex >= expression.length || !rightChild || rightChild.type === NOOP) {
+    throw new ExpressionError(`Operator '${expression[index].value}' has no right operand`);
+  }
+
+  assertOperatorsHaveChildren(expression, leftChildIndex);
+  assertOperatorsHaveChildren(expression, rightChildIndex);
+};
+
+export const assertValidExpression = (expression, values) => {
+  const availableIdentifiers = Object.keys(values);
+  const infix = parse(expression);
+
+  const missingIdentifier = infix.find(({ type, value }) => type === IDENTIFIER && !availableIdentifiers.includes(value));
+
+  if (missingIdentifier) {
+    throw new ExpressionError(`Unknown identifier: '${missingIdentifier.value}'`);
+  }
+
+  const tree = infixToTree(infix);
+
+  assertOperatorsHaveChildren(tree, 0);
+};
