@@ -208,28 +208,29 @@
   };
 
   const newDataPoint = () => {
-    const name = 'newDatapoint';
+    const number = Object.keys(datalog.value.populationStrategies).length;
+    const name = `customDatapoint${number}`;
     datalog.value = {
       ...datalog.value,
       units: {
-        ...datalog.value.units,
         [name]: units.DIMENSIONLESS,
+        ...datalog.value.units,
       },
       readonly: {
-        ...datalog.value.readonly,
         [name]: false,
+        ...datalog.value.readonly,
       },
       populationStrategies: {
-        ...datalog.value.populationStrategies,
         [name]: 'manual',
+        ...datalog.value.populationStrategies,
       },
       formulae: {
-        ...datalog.value.formulae,
         [name]: '',
+        ...datalog.value.formulae,
       },
       points: datalog.value.points.map((point) => ({
-        ...point,
         [name]: 0,
+        ...point,
       })),
     };
   };
