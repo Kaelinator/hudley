@@ -4,9 +4,19 @@
       {{ props.label }}
     </label>
     <div :class="$style.inputWrapper">
-      <input v-model="text" :class="$style.textBox" :id="id" type="text" @change="handleChange" :disabled="disabled" />
+      <input
+        v-model="text"
+        :class="[$style.textBox, props.error && $style.error]"
+        :id="id"
+        type="text"
+        @change="handleChange"
+        :disabled="disabled"
+      />
     </div>
   </div>
+  <span v-if="props.error" :class="$style.errorMessage">
+    {{ props.error }}
+  </span>
 </template>
 
 <script setup>
@@ -16,6 +26,7 @@
     label: String,
     startValue: String,
     disabled: { type: Boolean, default: false },
+    error: { type: String },
   });
 
   const id = useId();
@@ -53,5 +64,13 @@
     color: black;
     width: 130px;
     padding: 0;
+  }
+
+  .error {
+    border: 2px solid red;
+  }
+
+  .errorMessage {
+    color: red;
   }
 </style>

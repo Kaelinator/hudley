@@ -15,7 +15,7 @@
     height: Number,
   });
 
-  const frame = ref("");
+  const frame = ref('');
   const datalog = inject('datalog');
   const components = inject('components');
 

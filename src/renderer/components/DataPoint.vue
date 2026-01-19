@@ -22,7 +22,7 @@
         <option value="manual">Manually</option>
         <option value="formulaic">Formulaically</option>
       </Select>
-      <TextBox v-if="populationStrategy == 'formulaic'" @change="setFormula" label="Formula:" :startValue="formula" />
+      <TextBox v-if="populationStrategy == 'formulaic'" @change="setFormula" label="Formula:" :startValue="formula" :error="error" />
       <div :class="$style.editControlWrapper">
         <button @click="remove" :class="$style.button">
           <AiFillDelete />
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-  import { defineEmits, defineProps, ref } from 'vue';
+  import { defineEmits, defineProps, inject, ref } from 'vue';
   import { BsPencilFill } from 'vue-icons-plus/bs';
   import { MdAdd } from 'vue-icons-plus/md';
   import { AiFillDelete, AiOutlineCheck } from 'vue-icons-plus/ai';
@@ -45,6 +45,7 @@
   import Select from './Select.vue';
 
   import { units } from '../../shared/units';
+  import { assertValidExpression, ExpressionError } from '../../shared/formula';
 
   const props = defineProps({
     name: String, 
@@ -55,6 +56,8 @@
   });
 
   const emit = defineEmits(['addToView', 'update', 'remove']);
+
+  const datalog = inject('datalog');
 
   const name = ref(props.name);
   const setName = (newName) => {
@@ -72,7 +75,18 @@
   };
 
   const formula = ref(props.formula);
+  const error = ref();
   const setFormula = (f) => {
+    try {
+      assertValidExpression(f, datalog.value.points[0]);
+    } catch (e) {
+      if (e instanceof ExpressionError) {
+        error.value = e.message;
+        return;
+      }
+    }
+
+    error.value = undefined;
     formula.value = f;
   };
 
