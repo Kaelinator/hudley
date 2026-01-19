@@ -3,7 +3,7 @@
     <div :class="$style.bar">
       <CollapsibleSection title="Project Settings">
         <div :class="$style.projectSettingsForm">
-          <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" />
+          <FilePicker @change="setDatalogPath" placeholder="select your datalog.dl" :options="openDatalogOptions" action="open" :path="datalogPath" :error="datalogFileError"/>
           <NumericUpDown @change="setStartPoint" :min="0" :max="endPoint" :disabled="!datalogPath" label="Start point:" />
           <NumericUpDown @change="setEndPoint" :startValue="datalog?.points.length" :min="startPoint" :max="datalog?.points.length" :disabled="!datalogPath" label="End point:" />
           <Select @change="setFramerate" label="Framerate:" :startValue="framerate.toFixed()">
@@ -18,7 +18,7 @@
           </Select>
           <NumericUpDown @change="w => canvasWidth = w" :min="0" :startValue="canvasWidth" label="Canvas width:" />
           <NumericUpDown @change="h => canvasHeight = h" :min="0" :startValue="canvasHeight" label="Canvas height:" />
-          <FilePicker @change="setRenderPath" placeholder="select your output.webm" :options="saveVideoOptions" action="save" />
+          <FilePicker @change="setRenderPath" placeholder="select your output.webm" :options="saveVideoOptions" action="save" :path="renderPath"/>
           <Button v-if="!renderInProgress" @click="render" :disabled="!datalog || !renderPath">Render</Button>
           <ProgressBar v-else :progress="progress.progress" @cancel="cancelRender" cancellable>
             Rendering: {{ (progress.progress * 100).toFixed(0) }}%
@@ -124,12 +124,30 @@
     properties: ['showOverwriteConfirmation']
   }
 
+  const datalogFileError = ref();
   const datalogPath = ref();
   const datalog = ref();
   provide('datalog', readonly(datalog));
   const setDatalogPath = async (path) => {
+
+    if (datalog.value) {
+      if (!confirm('Loading datalog will discard the current project.')) {
+        return;
+      }
+    }
+
     datalogPath.value = path;
-    const log = await window.hudley.readDatalog(path);
+    datalog.value = undefined;
+    datalogFileError.value = undefined;
+
+    let log;
+    try {
+      log = await window.hudley.readDatalog(path);
+    } catch (e) {
+      datalogFileError.value = e.message;
+      return;
+    }
+
     datalog.value = {
       ...log,
       readonly: Object.keys(log.units).reduce((result, key) => ({

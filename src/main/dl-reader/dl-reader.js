@@ -1,24 +1,31 @@
 import { open } from 'node:fs/promises';
 import { units } from '../../shared/units';
 
+/* must be serialized in order to be properly handled by renderer :P */
+export class DatalogReadError extends Error {
+  constructor(message = '', ...args) {
+    super(message, ...args);
+  }
+}
+
 const DATALOG_SIGNATURE = 0x95365F;
 const DATAPOINT_LENGTH = 0x9D0;
 const DATAPOINTS_START_OFFSET = 0x2EE4;
 
 const verifySignature = ({ bytesRead, buffer }) => {
   if (bytesRead < 0x8) {
-    throw new Error('File ended abruptly');
+    throw new DatalogReadError('File ended unexpectedly');
   }
 
   const signature = Number(buffer.readBigInt64LE(0));
   if (signature !== DATALOG_SIGNATURE) {
-    throw new Error(`File does not match typical datalog signature. ${signature} != ${DATALOG_SIGNATURE}`);
+    throw new DatalogReadError(`File does not match typical datalog signature. ${signature} != ${DATALOG_SIGNATURE}`);
   }
 };
 
 const getUntilNullTerminatedString = ({ bytesRead, buffer }) => {
   if (bytesRead <= 0) {
-    throw new Error('File ended abruptly');
+    throw new DatalogReadError('File ended unexpectedly');
   }
 
   const nullTerminatorPosition = buffer.indexOf('\0');
@@ -28,7 +35,7 @@ const getUntilNullTerminatedString = ({ bytesRead, buffer }) => {
 
 const getDataPoint = ({ bytesRead, buffer }) => {
   if (bytesRead < DATAPOINT_LENGTH) {
-    throw new Error('File ended abruptly');
+    throw new DatalogReadError('File ended unexpectedly');
   }
 
   return {

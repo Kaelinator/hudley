@@ -26,7 +26,7 @@
     label: String,
     startValue: String,
     disabled: { type: Boolean, default: false },
-    error: { type: String },
+    error: String,
   });
 
   const id = useId();
