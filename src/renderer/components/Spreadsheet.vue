@@ -77,9 +77,9 @@
     const clickedCell = row * columnCount.value + col;
     if (!keyIsDown.value['Control'] && !keyIsDown.value['Shift']) {
 
-      if (col === 0 || isReadonly(Object.keys(datalog.value.units)[col - 1])) {
-        return;
-      }
+      // if (col === 0 || isReadonly(Object.keys(datalog.value.units)[col - 1])) {
+      //   return;
+      // }
 
       selected.value = Array(columnCount.value * rowCount.value).fill(false);
       selected.value[clickedCell] = true;
@@ -238,6 +238,15 @@
   }
 
   .readonly {
-    background: #eee;
+    background: #DDD;
+  }
+
+  .selected.readonly {
+    background: #BBB;
+  }
+
+  .lastSelected.readonly {
+    padding: 1px;
+    border: 2px solid #000;
   }
 </style>
