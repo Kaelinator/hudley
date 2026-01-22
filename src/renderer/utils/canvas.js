@@ -33,7 +33,6 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
 
     const text = `${component.label}${value.toFixed(component.decimalPlaces)}${component.showUnitOfMeasure ? abbreviations[component.unitOfMeasure] : ''}`;
 
-
     if (component.strokeWeight > 0) {
       context.strokeText(text, component.x, component.y);
     }
@@ -50,7 +49,7 @@ export const renderFrame = (context, components, dataPointValues, dataPointUnits
 };
 
 export const render = (context, components, datalog, {
-  startPoint, endPoint, framerate, renderPath, width, height
+  startPoint, endPoint, framerate, renderPath, width, height,
 }) => {
   let cancelled = false;
   let progressHandler;

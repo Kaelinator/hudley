@@ -82,7 +82,7 @@ const {
   V,
   A,
   OHM,
-  DIMENSIONLESS, 
+  DIMENSIONLESS,
 } = units;
 
 export const abbreviations = {
@@ -116,127 +116,129 @@ export const abbreviations = {
   [DIMENSIONLESS]: '',
 };
 
+
+const passthrough = Object.values(units).reduce((o, u) => ({ ...o, [u]: (v) => v }), {});
 /**
  * list of available unit conversions
  * useage: conversions[from][to](value)
  */
 export const conversions = {
   [F]: {
-    [C]: t => 0.55556 * (t - 32),
+    [C]: (t) => 0.55556 * (t - 32),
   },
 
   [C]: {
-    [F]: t => 1.8 * t + 32,
+    [F]: (t) => 1.8 * t + 32,
   },
 
   [PSIA]: {
-    [PSIG]: p => p - 14.696,
-    [KPA]: p => p * 6.894757,
-    [BAR]: p => p * 0.06894757,
+    [PSIG]: (p) => p - 14.696,
+    [KPA]: (p) => p * 6.894757,
+    [BAR]: (p) => p * 0.06894757,
   },
 
   [PSIG]: {
-    [PSIA]: p => p + 14.696,
-    [KPA]: p => p * 6.894757 + 101.325,
-    [BAR]: p => p * 0.06894757 + 1.01325,
+    [PSIA]: (p) => p + 14.696,
+    [KPA]: (p) => p * 6.894757 + 101.325,
+    [BAR]: (p) => p * 0.06894757 + 1.01325,
   },
 
   [KPA]: {
-    [PSIA]: p => p * 0.1450377,
-    [PSIG]: p => p * 0.1450377 - 14.696,
-    [BAR]: p => p * 0.01,
+    [PSIA]: (p) => p * 0.1450377,
+    [PSIG]: (p) => p * 0.1450377 - 14.696,
+    [BAR]: (p) => p * 0.01,
   },
 
   [BAR]: {
-    [PSIA]: p => p * 14.50377,
-    [PSIG]: p => p * 14.50377 - 14.696,
-    [KPA]: p => p * 100,
+    [PSIA]: (p) => p * 14.50377,
+    [PSIG]: (p) => p * 14.50377 - 14.696,
+    [KPA]: (p) => p * 100,
   },
 
   [GPH]: {
-    [LPH]: q => q * 3.785412,
-    [GLBPH]: q => q * 6.073,
+    [LPH]: (q) => q * 3.785412,
+    [GLBPH]: (q) => q * 6.073,
   },
 
   [LPH]: {
-    [GPH]: q => q * 0.264172,
-    [GLBPH]: q => q * 1.60432,
+    [GPH]: (q) => q * 0.264172,
+    [GLBPH]: (q) => q * 1.60432,
   },
 
   [GLBPH]: {
-    [GPH]: q => q * 0.164663,
-    [LPH]: q => q * 0.623318,
+    [GPH]: (q) => q * 0.164663,
+    [LPH]: (q) => q * 0.623318,
   },
 
   [MS]: {
-    [S]: t => t * 0.001,
-    [H]: t => t * 2.777778E-7,
+    [S]: (t) => t * 0.001,
+    [H]: (t) => t * 2.777778E-7,
   },
 
   [S]: {
-    [MS]: t => t * 1000,
-    [H]: t => t * 2.777778E-4,
+    [MS]: (t) => t * 1000,
+    [H]: (t) => t * 2.777778E-4,
   },
 
   [H]: {
-    [MS]: t => t * 3.6E6,
-    [S]: t => t * 3600,
+    [MS]: (t) => t * 3.6E6,
+    [S]: (t) => t * 3600,
   },
 
   [FT]: {
-    [IN]: l => l * 12,
-    [M]: l => 0.3048,
-    [MM]: l => 304.8,
+    [IN]: (l) => l * 12,
+    [M]: (l) => 0.3048,
+    [MM]: (l) => 304.8,
   },
 
   [IN]: {
-    [FT]: l => l * 0.083333,
-    [M]: l => l * 0.0254,
-    [MM]: l => l * 25.4,
+    [FT]: (l) => l * 0.083333,
+    [M]: (l) => l * 0.0254,
+    [MM]: (l) => l * 25.4,
   },
 
   [M]: {
-    [FT]: l => l * 3.28084,
-    [IN]: l => l * 39.37008,
-    [MM]: l => l * 1000,
+    [FT]: (l) => l * 3.28084,
+    [IN]: (l) => l * 39.37008,
+    [MM]: (l) => l * 1000,
   },
 
   [MM]: {
-    [FT]: l => l * 0.00328084,
-    [IN]: l => l * 0.03937008,
-    [M]: l => l * 0.001,
+    [FT]: (l) => l * 0.00328084,
+    [IN]: (l) => l * 0.03937008,
+    [M]: (l) => l * 0.001,
   },
 
   [MPH]: {
-    [KPH]: v => v * 1.609344,
+    [KPH]: (v) => v * 1.609344,
   },
 
   [KPH]: {
-    [MPH]: v => v * 0.6213712,
+    [MPH]: (v) => v * 0.6213712,
   },
 
   [TO1]: {
-    [PERCENT]: p => p * 100,
+    [PERCENT]: (p) => p * 100,
   },
 
   [PERCENT]: {
-    [TO1]: p => p * 0.01,
+    [TO1]: (p) => p * 0.01,
   },
 
   [RPM]: {
-    [HZ]: r => r * 0.0166667,
+    [HZ]: (r) => r * 0.0166667,
   },
 
   [HZ]: {
-    [RPM]: r => r * 60,
+    [RPM]: (r) => r * 60,
   },
 
   [DEG]: {
-    [RAD]: a => a * 0.01745329,
+    [RAD]: (a) => a * 0.01745329,
   },
 
   [RAD]: {
-    [DEG]: a => a * 57.29578,
+    [DEG]: (a) => a * 57.29578,
   },
 
   [V]: {},
@@ -244,5 +246,5 @@ export const conversions = {
   [OHM]: {},
 
   /* passthrough */
-  [DIMENSIONLESS]: Object.values(units).reduce((o, u) => ({ ...o, [u]: v => v }), {})
+  [DIMENSIONLESS]: passthrough,
 };

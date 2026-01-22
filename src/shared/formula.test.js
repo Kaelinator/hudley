@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest';
 import {
-  parse, infixToTree, types, evaluate, calculate, assertValidExpression, ExpressionError
+  parse, infixToTree, types, evaluate, calculate, assertValidExpression, ExpressionError,
 } from './formula';
 
 describe('parse', () => {
@@ -851,6 +851,8 @@ describe('assertValidExpression', () => {
     expect(() => assertValidExpression('a(b(c+a', { a: 3, b: 4, c: 5 })).not.toThrowError();
     expect(() => assertValidExpression('(a^2+b^2)^(1/2)', { a: 3, b: 4 })).not.toThrowError();
     expect(() => assertValidExpression('(-b+(b^2-4*a*c)^(1/2))/(2*a)', { a: 5, b: 13, c: 7 })).not.toThrowError();
-    expect(() => assertValidExpression('G * m0 * m1 / (r^2)', { G: 0, m0: 0, m1: 0, r: 1 })).not.toThrowError();
+    expect(() => assertValidExpression('G * m0 * m1 / (r^2)', {
+      G: 0, m0: 0, m1: 0, r: 1,
+    })).not.toThrowError();
   });
 });
